@@ -1,0 +1,75 @@
+{
+  "parser": "babel-eslint",
+  "rules": {
+    "strict": 0,
+    "indent": [
+        2,
+        2,
+        {"SwitchCase": 1}
+    ],
+    "quotes": [
+        2,
+        "single"
+    ],
+    "linebreak-style": [
+        2,
+        "unix"
+    ],
+    "semi": [
+        2,
+        "always"
+    ],
+    "accessor-pairs": [2, {getWithoutSet: false}],
+    "no-underscore-dangle": 0,
+    "no-console": 0,
+    "new-cap": 0,
+    "comma-dangle": [2, "always-multiline"],
+    "no-var": 2,
+    "constructor-super": 2,
+    "generator-star-spacing": [2, "before"],
+    "no-this-before-super": 2,
+    "object-shorthand": [2, "always"],
+    "prefer-const": 2,
+    "no-unused-vars": [2, {"vars": "all", "args": "after-used"}],
+    "no-undef": 2,
+    "jsx-quotes": [2, "prefer-double"],
+    "babel/object-shorthand": 2,
+    "babel/generator-star-spacing": 2
+  },
+  "env": {
+    "es6": true,
+    "browser": true,
+    "node": true,
+    "mocha": true,
+  },
+  "globals": {
+    "FB": true,
+    "componentHandler": true,
+  },
+  "ecmaFeatures": {
+    "jsx": true,
+    "generators": true,
+    "arrowFunctions": true,
+    "blockBindings": true,
+    "classes": true,
+    "defaultParams": true,
+    "destructuring": true,
+    "modules": true,
+    "objectLiteralComputedProperties": true,
+    "objectLiteralShorthandMethods": true,
+    "objectLiteralShorthandProperties": true,
+    "spread": true,
+    "templateStrings": true,
+    "binaryLiterals": true,
+    "forOf": true,
+    "octalLiterals": true,
+    "regexUFlag": true,
+    "regexYFlag": true,
+    "restParams": true,
+    "superInFunctions": true,
+    "unicodeCodePointEscapes": true
+  },
+  "plugins": [
+    "babel"
+  ],
+}
