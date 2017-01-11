@@ -10,9 +10,19 @@ app.get('/', function (req, res) {
   res.sendFile(__dirname + '/index.html');
 });
 
-io.on('connection', function (socket) {
-  socket.emit('news', { hello: 'world' });
-  socket.on('my other event', function (data) {
-    console.log(data);
+const indices = io.of('/indices');
+indices.on('connection', function (socket){
+  socket.on('disconnect', function (){
   });
+  socket.on('subscribe', function(room) {
+    console.log('joining room', room);
+    socket.join(room);
+  });
+
+  socket.on('unsubscribe', function(room) {
+    console.log('leaving room', room);
+    socket.leave(room);
+  });
+
+  // indices.sockets.in(data.room).emit('message', data);
 });
