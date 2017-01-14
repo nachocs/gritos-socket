@@ -3,25 +3,25 @@ const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const fs = require('fs');
 
-server.listen(8081, function (){
+server.listen(8081, () => {
   console.log('listening port 8081.');
 });
 
-app.get('/', function (req, res) {
+app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
 const indices = io.of('/indices');
-indices.on('connection', function (socket){
-  socket.on('disconnect', function (){
+indices.on('connection', socket => {
+  socket.on('disconnect', () => {
   });
-  socket.on('subscribe', function(room) {
+  socket.on('subscribe', room => {
     console.log('joining room', room);
     watch(room);
     socket.join(room);
   });
 
-  socket.on('unsubscribe', function(room) {
+  socket.on('unsubscribe', room => {
     console.log('leaving room', room);
     socket.leave(room);
   });
@@ -36,11 +36,15 @@ function watch (room){
   } else {
     logfile = '/home/gritos/www/admin/logs' + room;
   }
-  fs.watchFile(logfile, function (){
+  fs.watchFile(logfile, () => {
     console.log('modificado fichero', logfile);
-    fs.readFile(logfile, function (err, data){
-      console.log('emitido modificado', err, data);
-      indices.sockets.in(room).emit('updated', data);
+    fs.readFile(logfile, (err, data) => {
+      if (err){
+        console.log('error', err);
+      } else {
+        console.log('emitido modificado', err, data);
+        indices.in(room).emit('updated', data);
+      }
     });
   });
 }
