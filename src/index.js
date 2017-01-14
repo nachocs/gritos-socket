@@ -31,7 +31,8 @@ indices.on('connection', socket => {
 
 function watch (room){
   let logfile;
-  const logroom = room.replace(/\//ig, '.');
+  let logroom = room.replace(/\/$/,'');
+  logroom = logroom.replace(/\//ig, '.');
   if (room === 'foroscomun' || (/\//).test(room)){
     logfile = '/home/indices/admin/logs/' + logroom + '.num.txt';
   }  else {
