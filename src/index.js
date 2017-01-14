@@ -31,10 +31,11 @@ indices.on('connection', socket => {
 
 function watch (room){
   let logfile;
-  if (room === 'foroscomun'){
-    logfile = '/home/indices/admin/logs' + room;
-  } else {
-    logfile = '/home/gritos/www/admin/logs' + room;
+  const logroom = room.replace(/\//ig, '.');
+  if (room === 'foroscomun' || room.test(/\//)){
+    logfile = '/home/indices/admin/logs/' + logroom + '.num.txt';
+  }  else {
+    logfile = '/home/gritos/www/admin/logs/' + logroom;
   }
   fs.watchFile(logfile, () => {
     console.log('modificado fichero', logfile);
