@@ -30,7 +30,12 @@ indices.on('connection', function (socket){
 });
 
 function watch (room){
-  const logfile = '/home/gritos/www/admin/logs' + room;
+  let logfile;
+  if (room === 'foroscomun'){
+    logfile = '/home/indices/admin/logs' + room;
+  } else {
+    logfile = '/home/gritos/www/admin/logs' + room;
+  }
   fs.watchFile(logfile, function (){
     console.log('modificado fichero', logfile);
     fs.readFile(logfile, function (err, data){
