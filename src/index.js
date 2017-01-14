@@ -32,7 +32,7 @@ indices.on('connection', socket => {
 function watch (room){
   let logfile;
   const logroom = room.replace(/\//ig, '.');
-  if (room === 'foroscomun' || room.test(/\//)){
+  if (room === 'foroscomun' || (/\//).test(room)){
     logfile = '/home/indices/admin/logs/' + logroom + '.num.txt';
   }  else {
     logfile = '/home/gritos/www/admin/logs/' + logroom;
