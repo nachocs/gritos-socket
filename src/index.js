@@ -32,7 +32,7 @@ indices.on('connection', socket => {
 function watch (room){
   let logfile, dirRoom;
   room = room.replace(/\/$/,'');
-  const logRoom = logRoom.replace(/\//ig, '.');
+  const logRoom = room.replace(/\//ig, '.');
   if (room === 'foroscomun' || (/\//).test(room)){
     logfile = '/home/indices/admin/logs/' + logRoom + '.num.txt';
     dirRoom = '/home/indices/' + room;
