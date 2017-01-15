@@ -52,6 +52,7 @@ function watch (room){
         //   indices.in(room).emit('updated');
         // });
       } else {
+        console.log('emitido room', room);
         console.log('emitido modificado', err, data);
         indices.in(room).emit('updated', data);
       }
