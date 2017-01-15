@@ -17,8 +17,8 @@ indices.on('connection', socket => {
   });
   socket.on('subscribe', room => {
     console.log('joining room', room);
-    watch(room);
     socket.join(room);
+    watch(room);
   });
 
   socket.on('unsubscribe', room => {
