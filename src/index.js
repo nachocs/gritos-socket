@@ -18,12 +18,14 @@ class App{
       socket.on('disconnect', () => {
       });
       socket.on('subscribe', room => {
+        room = room.replace(/\/$/,'');
         console.log('joining room', room);
         socket.join(room);
         this.watch(room);
       });
 
       socket.on('unsubscribe', room => {
+        room = room.replace(/\/$/,'');
         console.log('leaving room', room);
         socket.leave(room);
       });
@@ -33,7 +35,6 @@ class App{
   watch (room){
     let logfile;
     let indice;
-    room = room.replace(/\/$/,'');
     const logRoom = room.replace(/\//ig, '.');
     if (room === 'foroscomun' || (/\//).test(room)){
       logfile = `/home/indices/admin/logs/${logRoom}.num.txt`;
