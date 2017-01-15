@@ -41,12 +41,12 @@ function watch (room){
     logfile = '/home/gritos/www/admin/logs/' + logRoom + '.num.txt';
     // dirRoom = '/home/gritos/www/' + room;
   }
-  console.log('watching', room, logRoom);
+  console.log('watching', room, logfile);
   fs.watchFile(logfile, () => {
     console.log('modificado fichero', logfile);
     fs.readFile(logfile, (err, data) => {
       if (err){
-        console.log('error', err);
+        // console.log('error', err);
         // fs.watch(dirRoom, function (){
         //   console.log('emitido modificado DIR');
         //   indices.in(room).emit('updated');
