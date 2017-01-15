@@ -125,6 +125,8 @@ class App{
           values[1] = values[1].replace(/``/ig, '\n');
           entry[values[0]] = values[1];
         }
+        entry['NUMERO_ENTRADA'] = entrada;
+        entry['INDICE'] = indice;
         callback(entry);
       }
     });
