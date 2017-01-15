@@ -44,11 +44,10 @@ class App{
       indice = 'gritos/' + room;
     }
     // logfile = 'src/index.html';
-    console.log('watching', room, logfile);
+    // console.log('watching', room, logfile);
     if (this.watching[logfile]){return;}
     this.watching[logfile] = true;
     fs.watchFile(logfile, () => {
-      console.log('modificado fichero', logfile);
       fs.readFile(logfile, { encoding: 'utf8' }, (err, data) => {
         if (err){
           console.log('error', err);
@@ -58,8 +57,6 @@ class App{
           // });
         } else {
           data = data.replace(/\n$/,'');
-          console.log('emitido room', room);
-          console.log('emitido modificado', err, data);
           this.preparar_entrada((Number(data)-1), indice, entry =>{
             console.log('updated entry', room, entry);
             entry = this.parsear_entrada(entry);
@@ -119,7 +116,6 @@ class App{
       if (entryErr){
         console.log(entryErr);
       } else {
-        console.log('entryData', entryData);
         entryData = entryData.replace(/\n$/,'');
         const entry = {};
         const array = entryData.split('\n');
