@@ -44,7 +44,7 @@ function watch (room){
   console.log('watching', room, logfile);
   fs.watchFile(logfile, () => {
     console.log('modificado fichero', logfile);
-    fs.readFile(logfile, (err, data) => {
+    fs.readFile(logfile, { encoding: 'utf8' }, (err, data) => {
       if (err){
         // console.log('error', err);
         // fs.watch(dirRoom, function (){
