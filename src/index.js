@@ -30,15 +30,16 @@ indices.on('connection', socket => {
 });
 
 function watch (room){
-  let logfile, dirRoom;
+  let logfile;
+  // let dirRoom;
   room = room.replace(/\/$/,'');
   const logRoom = room.replace(/\//ig, '.');
   if (room === 'foroscomun' || (/\//).test(room)){
     logfile = '/home/indices/admin/logs/' + logRoom + '.num.txt';
-    dirRoom = '/home/indices/' + room;
+    // dirRoom = '/home/indices/' + room;
   }  else {
     logfile = '/home/gritos/www/admin/logs/' + logRoom + '.num.txt';
-    dirRoom = '/home/gritos/www/' + room;
+    // dirRoom = '/home/gritos/www/' + room;
   }
   console.log('watching', room, logRoom);
   fs.watchFile(logfile, () => {
@@ -46,10 +47,10 @@ function watch (room){
     fs.readFile(logfile, (err, data) => {
       if (err){
         console.log('error', err);
-        fs.watch(dirRoom, function (){
-          console.log('emitido modificado DIR');
-          indices.in(room).emit('updated');
-        });
+        // fs.watch(dirRoom, function (){
+        //   console.log('emitido modificado DIR');
+        //   indices.in(room).emit('updated');
+        // });
       } else {
         console.log('emitido modificado', err, data);
         indices.in(room).emit('updated', data);
