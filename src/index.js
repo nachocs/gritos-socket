@@ -61,7 +61,7 @@ class App{
           console.log('emitido room', room);
           console.log('emitido modificado', err, data);
           this.leer_entrada_indice((Number(data)-1), indice, entry =>{
-            console.log('updated entry', entry);
+            console.log('updated entry', room, entry);
             this.indices.in(room).emit('updated', {room, entry});
           });
         }
