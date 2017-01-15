@@ -60,15 +60,60 @@ class App{
           data = data.replace(/\n$/,'');
           console.log('emitido room', room);
           console.log('emitido modificado', err, data);
-          this.leer_entrada_indice((Number(data)-1), indice, entry =>{
+          this.preparar_entrada((Number(data)-1), indice, entry =>{
             console.log('updated entry', room, entry);
+            entry = this.parsear_entrada(entry);
             this.indices.in(room).emit('updated', {room, entry});
           });
         }
       });
     });
   }
-
+  formatComments(string){
+    string = string.replace(/<br>/ig, '\n');
+    string = string.replace(/<p>/ig, '\n\n');
+    string = string.replace(/\n/ig, '<BR>');
+    return string;
+  }
+  parsear_entrada(entry){
+    if (entry.ID){
+      delete entry['REMOTE_ADDR'];
+      delete entry['REMOTE_HOST'];
+      delete entry['uid'];
+      delete entry['clave'];
+      entry.comments = this.formatComments(entry.comments);
+      return entry;
+    }
+  }
+  preparar_entrada(entrada, indice, callback){
+    const cb = (entry)=>{
+      if (indice.match(/\d+$/)){
+        this.leer_entrada_indice(entry.ciudadano, 'ciudadanos', (ciudadano)=>{
+          entry.emocion = ciudadano.dreamy_principal;
+          entry.name = ciudadano.alias_principal;
+          callback(entry);
+        });
+      } else {
+        callback(entry);
+      }
+    };
+    this.leer_entrada_indice(entrada, indice, entry =>{
+      let nindice;
+      entry['num'] = entrada;
+      if (entry.nforo){
+        if (entry.niden){
+          nindice = entry.niden + '/' + entry.nforo;
+        } else{
+          nindice = entry.nforo;
+        }
+        this.leer_entrada_indice(entry.nnum, nindice, entry2 =>{
+          cb(Object.assign({}, entry, entry2));
+        });
+      } else {
+        cb(entry);
+      }
+    });
+  }
   leer_entrada_indice(entrada, indice, callback){
     fs.readFile(directorio + indice + '/' + entrada + '.txt', { encoding: 'utf8' }, (entryErr, entryData) => {
       if (entryErr){
