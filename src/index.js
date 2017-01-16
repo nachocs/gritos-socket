@@ -45,26 +45,36 @@ class App{
     }
     // logfile = 'src/index.html';
     // console.log('watching', room, logfile);
-    if (this.watching[logfile]){return;}
-    this.watching[logfile] = true;
-    fs.watchFile(logfile, () => {
-      fs.readFile(logfile, { encoding: 'utf8' }, (err, data) => {
-        if (err){
-          console.log('error', err);
-          // fs.watch(dirRoom, function (){
-          //   console.log('emitido modificado DIR');
-          //   indices.in(room).emit('updated');
-          // });
-        } else {
-          data = data.replace(/\n$/,'');
-          this.preparar_entrada((Number(data)-1), indice, entry =>{
-            console.log('updated entry', room, entry);
-            entry = this.parsear_entrada(entry);
-            this.indices.in(room).emit('updated', {room, entry});
-          });
-        }
+    if (this.watching[room]){return;}
+    this.watching[room] = true;
+    if ((/\d+$/).test(room)){ // it's a message
+      const numero = room.match(/\d+$/)[0];
+      indice = room.replace(/\/\d+$/,'');
+      fs.watchFile(directorio + room + '.txt', (watch) => {
+        console.log('watch', watch);
+        this.preparar_entrada(numero, indice, entry => {
+          console.log('updated entry(msg)', room, entry);
+          entry = this.parsear_entrada(entry);
+          this.indices.in(room).emit('updated', {room, entry});
+        });
       });
-    });
+    } else {
+      fs.watchFile(logfile, () => {
+        fs.readFile(logfile, { encoding: 'utf8' }, (err, data) => {
+          if (err){
+            console.log('error', err);
+          } else {
+            data = data.replace(/\n$/,'');
+            this.preparar_entrada((Number(data)-1), indice, entry =>{
+              console.log('updated entry(col)', room, entry);
+              entry = this.parsear_entrada(entry);
+              this.indices.in(room).emit('updated', {room, entry});
+            });
+          }
+        });
+      });
+    }
+
   }
   formatComments(string){
     string = string.replace(/<br>/ig, '\n');
