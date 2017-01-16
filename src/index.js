@@ -54,6 +54,7 @@ class App{
         console.log('watch', watch);
         this.leer_entrada_indice(numero, indice, (entry) =>{
           if (entry.minimsgs){
+            console.log('go to read collection ', logfile, room, indice);
             this.readCollection(logfile, room, indice);
           }
         });
@@ -72,7 +73,7 @@ class App{
   readCollection(logfile, room, indice){
     fs.readFile(logfile, { encoding: 'utf8' }, (err, data) => {
       if (err){
-        console.log('error', err);
+        console.log('readcollection Error', err);
       } else {
         data = data.replace(/\n$/,'');
         this.preparar_entrada((Number(data)-1), indice, entry =>{
