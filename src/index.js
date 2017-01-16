@@ -46,7 +46,7 @@ class App{
       });
     }
   }
-  readCollection(logfile, room, indice){
+  readCollection(room){
     let logfile;
     let indice;
     const logRoom = room.replace(/collection:/, '').replace(/\/$/, '').replace(/\//ig, '.');
