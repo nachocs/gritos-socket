@@ -61,13 +61,11 @@ class App{
           this.readCollection(logfile, room, indice);
         }
       });
-      if (indiceMsg !== 'ciudadanos'){
-        this.preparar_entrada(numero, indiceMsg, (entry) => {
-          console.log('updated entry(msg)', room, entry);
-          entry = this.parsear_entrada(entry);
-          this.indices.in(room).emit('msg', {room, entry});
-        });
-      }
+      this.preparar_entrada(numero, indiceMsg, (entry) => {
+        console.log('updated entry(msg)', room, entry);
+        entry = this.parsear_entrada(entry);
+        this.indices.in(room).emit('msg', {room, entry});
+      });
       // });
     } else {
       // fs.watchFile(logfile, () => {
