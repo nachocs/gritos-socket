@@ -18,17 +18,15 @@ class App{
       socket.on('disconnect', () => {
       });
       socket.on('subscribe', room => {
-        room = room.replace(/\/$/,'');
         console.log('joining room', room);
         socket.join(room);
       });
-      socket.on('update', (room)=>{
+      socket.on('update', (room) => {
         console.log('recibido update', room);
         this.watch(room);
       });
 
       socket.on('unsubscribe', room => {
-        room = room.replace(/\/$/,'');
         console.log('leaving room', room);
         socket.leave(room);
       });
@@ -38,39 +36,25 @@ class App{
   watch (room){
     let logfile;
     let indice;
-    const logRoom = room.replace(/\//ig, '.');
-    if (room === 'foroscomun' || (/\//).test(room)){
-      logfile = `/home/indices/admin/logs/${logRoom}.num.txt`;
-      indice = room;
-    }  else {
-      logfile = `/home/gritos/www/admin/logs/${logRoom}.num.txt`;
-      indice = 'gritos/' + room;
-    }
-    // logfile = 'src/index.html';
-    // console.log('watching', room, logfile);
-    // if (this.watching[room]){return;}
-    // this.watching[room] = true;
-    if ((/\d+$/).test(room)){ // it's a message
+    const logRoom = room.replace(/\/$/,'').replace(/\//ig, '.');
+
+    if ((/collection:/).test(room)){ // a collection
+      if (room === 'foroscomun' || (/\//).test(room)){
+        logfile = `/home/indices/admin/logs/${logRoom}.num.txt`;
+        indice = room.replace(/collection:/,'');
+      }  else {
+        logfile = `/home/gritos/www/admin/logs/${logRoom}.num.txt`;
+        indice = 'gritos/' + room.replace(/collection:/,'');
+      }
+      this.readCollection(logfile, room, indice);
+    } else { // a message
       const numero = room.match(/\d+$/)[0];
       const indiceMsg = room.replace(/\/\d+$/,'');
-      // fs.watchFile(directorio + room + '.txt', (watch) => {
-        // console.log('watch', watch);
-      this.leer_entrada_indice(numero, indiceMsg, (entry) =>{
-        if (entry.minimsgs){
-          console.log('go to read collection ', logfile, room, indice);
-          this.readCollection(logfile, room, indice);
-        }
-      });
       this.preparar_entrada(numero, indiceMsg, (entry) => {
         console.log('updated entry(msg)', room, entry);
         entry = this.parsear_entrada(entry);
         this.indices.in(room).emit('msg', {room, entry});
       });
-      // });
-    } else {
-      // fs.watchFile(logfile, () => {
-      this.readCollection(logfile, room, indice);
-      // });
     }
   }
   readCollection(logfile, room, indice){
