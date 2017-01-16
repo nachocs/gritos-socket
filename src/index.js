@@ -49,16 +49,16 @@ class App{
     this.watching[room] = true;
     if ((/\d+$/).test(room)){ // it's a message
       const numero = room.match(/\d+$/)[0];
-      indice = room.replace(/\/\d+$/,'');
+      const indiceMsg = room.replace(/\/\d+$/,'');
       fs.watchFile(directorio + room + '.txt', (watch) => {
         console.log('watch', watch);
-        this.leer_entrada_indice(numero, indice, (entry) =>{
+        this.leer_entrada_indice(numero, indiceMsg, (entry) =>{
           if (entry.minimsgs){
             console.log('go to read collection ', logfile, room, indice);
             this.readCollection(logfile, room, indice);
           }
         });
-        this.preparar_entrada(numero, indice, (entry) => {
+        this.preparar_entrada(numero, indiceMsg, (entry) => {
           console.log('updated entry(msg)', room, entry);
           entry = this.parsear_entrada(entry);
           this.indices.in(room).emit('msg', {room, entry});
@@ -132,7 +132,7 @@ class App{
   leer_entrada_indice(entrada, indice, callback){
     fs.readFile(directorio + indice + '/' + entrada + '.txt', { encoding: 'utf8' }, (entryErr, entryData) => {
       if (entryErr){
-        console.log('leer etrada indice Error', entryErr);
+        console.log('leer entrada indice Error', entryErr);
       } else {
         entryData = entryData.replace(/\n$/,'');
         const entry = {};
