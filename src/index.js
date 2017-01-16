@@ -34,19 +34,8 @@ class App{
   }
 
   watch (room){
-    let logfile;
-    let indice;
-    const logRoom = room.replace(/\/$/,'').replace(/\//ig, '.');
-
     if ((/collection:/).test(room)){ // a collection
-      if (room === 'foroscomun' || (/\//).test(room)){
-        logfile = `/home/indices/admin/logs/${logRoom}.num.txt`;
-        indice = room.replace(/collection:/,'');
-      }  else {
-        logfile = `/home/gritos/www/admin/logs/${logRoom}.num.txt`;
-        indice = 'gritos/' + room.replace(/collection:/,'');
-      }
-      this.readCollection(logfile, room, indice);
+      this.readCollection(room);
     } else { // a message
       const numero = room.match(/\d+$/)[0];
       const indiceMsg = room.replace(/\/\d+$/,'');
@@ -58,6 +47,16 @@ class App{
     }
   }
   readCollection(logfile, room, indice){
+    let logfile;
+    let indice;
+    const logRoom = room.replace(/collection:/, '').replace(/\/$/, '').replace(/\//ig, '.');
+    if (room === 'foroscomun' || (/\//).test(room)){
+      logfile = `/home/indices/admin/logs/${logRoom}.num.txt`;
+      indice = room.replace(/collection:/, '');
+    }  else {
+      logfile = `/home/gritos/www/admin/logs/${logRoom}.num.txt`;
+      indice = 'gritos/' + room.replace(/collection:/, '');
+    }
     fs.readFile(logfile, { encoding: 'utf8' }, (err, data) => {
       if (err){
         console.log('readcollection Error', err);
