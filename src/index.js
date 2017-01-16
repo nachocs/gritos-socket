@@ -131,7 +131,7 @@ class App{
   leer_entrada_indice(entrada, indice, callback){
     fs.readFile(directorio + indice + '/' + entrada + '.txt', { encoding: 'utf8' }, (entryErr, entryData) => {
       if (entryErr){
-        console.log(entryErr);
+        console.log('leer etrada indice Error', entryErr);
       } else {
         entryData = entryData.replace(/\n$/,'');
         const entry = {};
