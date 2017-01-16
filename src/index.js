@@ -50,7 +50,7 @@ class App{
     let logfile;
     let indice;
     const logRoom = room.replace(/collection:/, '').replace(/\/$/, '').replace(/\//ig, '.');
-    if (room === 'foroscomun' || (/\//).test(room)){
+    if (room === 'collection:foroscomun' || (/\//).test(room)){
       logfile = `/home/indices/admin/logs/${logRoom}.num.txt`;
       indice = room.replace(/collection:/, '');
     }  else {
