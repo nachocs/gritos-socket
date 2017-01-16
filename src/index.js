@@ -61,11 +61,13 @@ class App{
           this.readCollection(logfile, room, indice);
         }
       });
-      this.preparar_entrada(numero, indiceMsg, (entry) => {
-        console.log('updated entry(msg)', room, entry);
-        entry = this.parsear_entrada(entry);
-        this.indices.in(room).emit('msg', {room, entry});
-      });
+      if (indiceMsg !== 'ciudadanos'){
+        this.preparar_entrada(numero, indiceMsg, (entry) => {
+          console.log('updated entry(msg)', room, entry);
+          entry = this.parsear_entrada(entry);
+          this.indices.in(room).emit('msg', {room, entry});
+        });
+      }
       // });
     } else {
       // fs.watchFile(logfile, () => {
@@ -99,7 +101,9 @@ class App{
       delete entry['REMOTE_HOST'];
       delete entry['uid'];
       delete entry['clave'];
-      entry.comments = this.formatComments(entry.comments);
+      if (entry.comments){
+        entry.comments = this.formatComments(entry.comments);
+      }
       return entry;
     }
   }
