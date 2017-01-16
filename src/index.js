@@ -21,6 +21,8 @@ class App{
         room = room.replace(/\/$/,'');
         console.log('joining room', room);
         socket.join(room);
+      });
+      socket.on('update', (room)=>{
         this.watch(room);
       });
 
@@ -50,24 +52,24 @@ class App{
     if ((/\d+$/).test(room)){ // it's a message
       const numero = room.match(/\d+$/)[0];
       const indiceMsg = room.replace(/\/\d+$/,'');
-      fs.watchFile(directorio + room + '.txt', (watch) => {
-        console.log('watch', watch);
-        this.leer_entrada_indice(numero, indiceMsg, (entry) =>{
-          if (entry.minimsgs){
-            console.log('go to read collection ', logfile, room, indice);
-            this.readCollection(logfile, room, indice);
-          }
-        });
-        this.preparar_entrada(numero, indiceMsg, (entry) => {
-          console.log('updated entry(msg)', room, entry);
-          entry = this.parsear_entrada(entry);
-          this.indices.in(room).emit('msg', {room, entry});
-        });
+      // fs.watchFile(directorio + room + '.txt', (watch) => {
+        // console.log('watch', watch);
+      this.leer_entrada_indice(numero, indiceMsg, (entry) =>{
+        if (entry.minimsgs){
+          console.log('go to read collection ', logfile, room, indice);
+          this.readCollection(logfile, room, indice);
+        }
       });
+      this.preparar_entrada(numero, indiceMsg, (entry) => {
+        console.log('updated entry(msg)', room, entry);
+        entry = this.parsear_entrada(entry);
+        this.indices.in(room).emit('msg', {room, entry});
+      });
+      // });
     } else {
-      fs.watchFile(logfile, () => {
-        this.readCollection(logfile, room, indice);
-      });
+      // fs.watchFile(logfile, () => {
+      this.readCollection(logfile, room, indice);
+      // });
     }
   }
   readCollection(logfile, room, indice){
