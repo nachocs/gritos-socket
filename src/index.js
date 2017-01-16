@@ -52,29 +52,36 @@ class App{
       indice = room.replace(/\/\d+$/,'');
       fs.watchFile(directorio + room + '.txt', (watch) => {
         console.log('watch', watch);
-        this.preparar_entrada(numero, indice, entry => {
+        this.leer_entrada_indice(numero, indice, (entry) =>{
+          if (entry.minimsgs){
+            this.readCollection(logfile, room, indice);
+          }
+        });
+        this.preparar_entrada(numero, indice, (entry) => {
           console.log('updated entry(msg)', room, entry);
           entry = this.parsear_entrada(entry);
-          this.indices.in(room).emit('updated', {room, entry});
+          this.indices.in(room).emit('msg', {room, entry});
         });
       });
     } else {
       fs.watchFile(logfile, () => {
-        fs.readFile(logfile, { encoding: 'utf8' }, (err, data) => {
-          if (err){
-            console.log('error', err);
-          } else {
-            data = data.replace(/\n$/,'');
-            this.preparar_entrada((Number(data)-1), indice, entry =>{
-              console.log('updated entry(col)', room, entry);
-              entry = this.parsear_entrada(entry);
-              this.indices.in(room).emit('updated', {room, entry});
-            });
-          }
-        });
+        this.readCollection(logfile, room, indice);
       });
     }
-
+  }
+  readCollection(logfile, room, indice){
+    fs.readFile(logfile, { encoding: 'utf8' }, (err, data) => {
+      if (err){
+        console.log('error', err);
+      } else {
+        data = data.replace(/\n$/,'');
+        this.preparar_entrada((Number(data)-1), indice, entry =>{
+          console.log('updated entry(col)', room, entry);
+          entry = this.parsear_entrada(entry);
+          this.indices.in(room).emit('updated', {room, entry});
+        });
+      }
+    });
   }
   formatComments(string){
     string = string.replace(/<br>/ig, '\n');
