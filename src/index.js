@@ -23,6 +23,7 @@ class App{
         socket.join(room);
       });
       socket.on('update', (room)=>{
+        console.log('recibido update', room);
         this.watch(room);
       });
 
