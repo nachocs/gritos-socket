@@ -12,7 +12,7 @@ class App{
     app.get('/', (req, res) => {
       res.sendFile(`${__dirname}/index.html`);
     });
-    this.watching = {};
+    // this.watching = {};
     this.indices = io.of('/indices');
     this.indices.on('connection', socket => {
       socket.on('disconnect', () => {
@@ -48,8 +48,8 @@ class App{
     }
     // logfile = 'src/index.html';
     // console.log('watching', room, logfile);
-    if (this.watching[room]){return;}
-    this.watching[room] = true;
+    // if (this.watching[room]){return;}
+    // this.watching[room] = true;
     if ((/\d+$/).test(room)){ // it's a message
       const numero = room.match(/\d+$/)[0];
       const indiceMsg = room.replace(/\/\d+$/,'');
