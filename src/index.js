@@ -172,7 +172,7 @@ class App{
               tipo: 'msg',
               indice,
               entrada,
-              nomoladif: Number(entry.mola)-Number(mola),
+              moladif: Number(entry.mola)-Number(mola),
             });
           }
           if (entry.nomola && entry.nomola > nomola){
