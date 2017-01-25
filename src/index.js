@@ -131,7 +131,7 @@ class App{
 // &add_notificaciones($CIUDADANO{'NUMERO_ENTRADA'}, 'foro', $IDforo, $Num_Entries);
 // &add_notificaciones($CIUDADANO{'NUMERO_ENTRADA'}, 'msg', $IDforo . '/' . $Num_Entries, '0');
 // &add_notificaciones($CIUDADANO{'NUMERO_ENTRADA'}, 'minis', $IDforo . '/' . $Num_Entries, '0');
-      const watchForos = [];
+      let watchForos = [];
       if (nots.foro){
         watchForos = nots.foro.split(/\|/);
         watchForos.foreach(foro => {
@@ -147,7 +147,7 @@ class App{
           }
         });
       }
-      const watchMinis = [];
+      let watchMinis = [];
       if (nots.minis){
         watchMinis = nots.minis.split(/\|/);
         watchMinis.foreach(mini => {
@@ -163,7 +163,7 @@ class App{
           }
         });
       }
-      const watchMolas = [];
+      let watchMolas = [];
       if(nots.msg){
         watchMolas = nots.msg.split(/\|/);
         watchMolas.foreach(mensaje => {
