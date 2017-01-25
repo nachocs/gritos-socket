@@ -135,8 +135,8 @@ class App{
       if (nots.foro){
         watchForos = nots.foro.split(/\|/);
         watchForos.foreach(foro => {
-          let last;
-          const [idforo, last] = foro.split(/\,/);
+          let idforo = '', last;
+          [idforo, last] = foro.split(/\,/);
           const num = Indicesdb.last_num(idforo);
           last = Number(last);
           if (num > last+1){
@@ -152,8 +152,8 @@ class App{
       if (nots.minis){
         watchMinis = nots.minis.split(/\|/);
         watchMinis.foreach(mini => {
-          let last;
-          const [idforo, last] = mini.split(/\,/);
+          let idforo = '', last;
+          [idforo, last] = mini.split(/\,/);
           last = Number(last);
           const num = Indicesdb.last_num(idforo);
           if (num > last + 1){
