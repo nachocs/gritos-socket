@@ -127,7 +127,7 @@ class App{
   prepararNotificaciones(user){
     const notificaciones = [];
     if (!user.match(/^\d+$/)){return;}
-    Indicesdb.leer_entrada_indice(user, 'notificaciones', nots=>{
+    Indicesdb.leer_entrada_indice(user, 'notificaciones', nots => {
 // &add_notificaciones($CIUDADANO{'NUMERO_ENTRADA'}, 'foro', $IDforo, $Num_Entries);
 // &add_notificaciones($CIUDADANO{'NUMERO_ENTRADA'}, 'msg', $IDforo . '/' . $Num_Entries, '0');
 // &add_notificaciones($CIUDADANO{'NUMERO_ENTRADA'}, 'minis', $IDforo . '/' . $Num_Entries, '0');
@@ -191,8 +191,11 @@ class App{
           }
         });
       }
-
+      if (notificaciones.length>0){
+        this.indices.in('notificaciones_' + user).emit('notificaciones', notificaciones);
+      }
     });
+
   }
 }
 
