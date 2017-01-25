@@ -18,21 +18,25 @@ class App{
     this.indices.on('connection', socket => {
       socket.on('disconnect', () => {
       });
+
       socket.on('subscribe', room => {
         console.log('joining room', room);
         socket.join(room);
-      });
-      socket.on('update', (room) => {
-        console.log('recibido update', room);
-        this.update(room);
       });
 
       socket.on('unsubscribe', room => {
         console.log('leaving room', room);
         socket.leave(room);
       });
+
+      socket.on('update', (room) => {
+        console.log('recibido update', room);
+        this.update(room);
+      });
+
       socket.on('prepararNotificaciones', user=>{
         console.log('preparar notificaciones', user);
+        socket.join('notificaciones_' + user);
         this.prepararNotificaciones(user);
       });
     });
