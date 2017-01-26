@@ -198,7 +198,7 @@ class App{
         });
       }
       if (notificaciones.length>0){
-        this.indices.in('notificaciones_' + user).emit('notificaciones', notificaciones);
+        this.indices.in('notificaciones_' + user).emit('notificaciones', {user, notificaciones});
       }
     });
 
@@ -222,7 +222,7 @@ class App{
       diferencia: 1,
       entry,
     });
-    this.indices.in('notificaciones_' + user).emit('notificaciones', notificaciones);
+    this.indices.in('notificaciones_' + user).emit('notificaciones', {user, notificaciones});
 
   }
 }
