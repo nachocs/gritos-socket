@@ -2,6 +2,7 @@ const app = require('express')();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 import Indicesdb from './indicesdb';
+import Vent from './vent';
 
 // '/Users/nacho/Google Drive/dreamers/dreamers/datos/indices/peliculas/'
 class App{
@@ -51,6 +52,7 @@ class App{
       this.preparar_entrada(numero, indiceMsg, (entry) => {
         console.log('updated entry(msg)', room, entry);
         entry = this.parsear_entrada(entry);
+        Vent.emit('msg_' + room, entry);
         this.indices.in(room).emit('msg', {room, entry});
       });
     }
@@ -67,6 +69,7 @@ class App{
       this.preparar_entrada((Number(data)-1), indice, entry =>{
         console.log('updated entry(col)', room, entry);
         entry = this.parsear_entrada(entry);
+        Vent.emit('updated_' + room, entry);
         this.indices.in(room).emit('updated', {room, entry});
       });
     }
@@ -137,6 +140,7 @@ class App{
         watchForos.foreach(foro => {
           let idforo = '', last;
           [idforo, last] = foro.split(/\,/);
+          this.watchForNotificaciones(idforo, user, 'foro');
           const num = Indicesdb.last_num(idforo);
           last = Number(last);
           if (num > last+1){
@@ -155,6 +159,7 @@ class App{
           let idforo = '', last;
           [idforo, last] = mini.split(/\,/);
           last = Number(last);
+          this.watchForNotificaciones(idforo, user, 'minis');
           const num = Indicesdb.last_num(idforo);
           if (num > last + 1){
             notificaciones.push({
@@ -173,6 +178,7 @@ class App{
           const [mola, nomola] = molas.split(/\//);
           const [,indice, entrada] = idforo.match(/^(.*)\/(\d+)$/);
           const entry = Indicesdb.leer_entrada_indiceSync(entrada, indice);
+          this.watchForNotificaciones(idforo, user, 'msg');
           if (entry.mola && entry.mola>mola){
             notificaciones.push({
               tipo: 'msg',
@@ -195,6 +201,28 @@ class App{
         this.indices.in('notificaciones_' + user).emit('notificaciones', notificaciones);
       }
     });
+
+  }
+  watchForNotificaciones(idforo, user, tipo){
+    if (tipo === 'msg'){
+      Vent.on('msg_' + idforo, (entry)=>{
+        this.emitNotificacion(user, tipo, idforo, entry);
+      });
+    } else {
+      Vent.on('updated_' + idforo, (entry)=>{
+        this.emitNotificacion(user, tipo, idforo, entry);
+      });
+    }
+  }
+  emitNotificacion(user, tipo, indice, entry){
+    const notificaciones = [];
+    notificaciones.push({
+      tipo,
+      indice,
+      diferencia: 1,
+      entry,
+    });
+    this.indices.in('notificaciones_' + user).emit('notificaciones', notificaciones);
 
   }
 }
