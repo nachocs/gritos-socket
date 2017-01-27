@@ -134,74 +134,75 @@ class App{
 // &add_notificaciones($CIUDADANO{'NUMERO_ENTRADA'}, 'foro', $IDforo, $Num_Entries);
 // &add_notificaciones($CIUDADANO{'NUMERO_ENTRADA'}, 'msg', $IDforo . '/' . $Num_Entries, '0');
 // &add_notificaciones($CIUDADANO{'NUMERO_ENTRADA'}, 'minis', $IDforo . '/' . $Num_Entries, '0');
-      let watchForos = [];
-      if (nots.foro){
-        watchForos = nots.foro.split(/\|/);
-        watchForos.foreach(foro => {
-          let idforo = '', last;
-          [idforo, last] = foro.split(/\,/);
-          this.watchForNotificaciones(idforo, user, 'foro');
-          const num = Indicesdb.last_num(idforo);
-          last = Number(last);
-          if (num > last+1){
-            notificaciones.push({
-              tipo: 'foro',
-              indice: idforo,
-              diferencia: (num-last+1),
-            });
-          }
-        });
-      }
-      let watchMinis = [];
-      if (nots.minis){
-        watchMinis = nots.minis.split(/\|/);
-        watchMinis.foreach(mini => {
-          let idforo = '', last;
-          [idforo, last] = mini.split(/\,/);
-          last = Number(last);
-          this.watchForNotificaciones(idforo, user, 'minis');
-          const num = Indicesdb.last_num(idforo);
-          if (num > last + 1){
-            notificaciones.push({
-              tipo: 'mini',
-              indice: idforo,
-              diferencia: (num-last+1),
-            });
-          }
-        });
-      }
-      let watchMolas = [];
-      if(nots.msg){
-        watchMolas = nots.msg.split(/\|/);
-        watchMolas.foreach(mensaje => {
-          const [idforo, molas] = mensaje.split(/\,/);
-          const [mola, nomola] = molas.split(/\//);
-          const [,indice, entrada] = idforo.match(/^(.*)\/(\d+)$/);
-          const entry = Indicesdb.leer_entrada_indiceSync(entrada, indice);
-          this.watchForNotificaciones(idforo, user, 'msg');
-          if (entry.mola && entry.mola>mola){
-            notificaciones.push({
-              tipo: 'msg',
-              indice,
-              entrada,
-              moladif: Number(entry.mola)-Number(mola),
-            });
-          }
-          if (entry.nomola && entry.nomola > nomola){
-            notificaciones.push({
-              tipo: 'msg',
-              indice,
-              entrada,
-              nomoladif: Number(entry.nomola)-Number(nomola),
-            });
-          }
-        });
-      }
-      if (notificaciones.length>0){
-        this.indices.in('notificaciones_' + user).emit('notificaciones', {user, notificaciones});
+      if(nots){
+        let watchForos = [];
+        if (nots.foro){
+          watchForos = nots.foro.split(/\|/);
+          watchForos.foreach(foro => {
+            let idforo = '', last;
+            [idforo, last] = foro.split(/\,/);
+            this.watchForNotificaciones(idforo, user, 'foro');
+            const num = Indicesdb.last_num(idforo);
+            last = Number(last);
+            if (num > last+1){
+              notificaciones.push({
+                tipo: 'foro',
+                indice: idforo,
+                diferencia: (num-last+1),
+              });
+            }
+          });
+        }
+        let watchMinis = [];
+        if (nots.minis){
+          watchMinis = nots.minis.split(/\|/);
+          watchMinis.foreach(mini => {
+            let idforo = '', last;
+            [idforo, last] = mini.split(/\,/);
+            last = Number(last);
+            this.watchForNotificaciones(idforo, user, 'minis');
+            const num = Indicesdb.last_num(idforo);
+            if (num > last + 1){
+              notificaciones.push({
+                tipo: 'mini',
+                indice: idforo,
+                diferencia: (num-last+1),
+              });
+            }
+          });
+        }
+        let watchMolas = [];
+        if(nots.msg){
+          watchMolas = nots.msg.split(/\|/);
+          watchMolas.foreach(mensaje => {
+            const [idforo, molas] = mensaje.split(/\,/);
+            const [mola, nomola] = molas.split(/\//);
+            const [,indice, entrada] = idforo.match(/^(.*)\/(\d+)$/);
+            const entry = Indicesdb.leer_entrada_indiceSync(entrada, indice);
+            this.watchForNotificaciones(idforo, user, 'msg');
+            if (entry.mola && entry.mola>mola){
+              notificaciones.push({
+                tipo: 'msg',
+                indice,
+                entrada,
+                moladif: Number(entry.mola)-Number(mola),
+              });
+            }
+            if (entry.nomola && entry.nomola > nomola){
+              notificaciones.push({
+                tipo: 'msg',
+                indice,
+                entrada,
+                nomoladif: Number(entry.nomola)-Number(nomola),
+              });
+            }
+          });
+        }
+        if (notificaciones.length>0){
+          this.indices.in('notificaciones_' + user).emit('notificaciones', {user, notificaciones});
+        }
       }
     });
-
   }
   watchForNotificaciones(idforo, user, tipo){
     if (tipo === 'msg'){
