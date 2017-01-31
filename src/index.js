@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const app = require('express')();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
@@ -13,12 +14,15 @@ class App{
     app.get('/', (req, res) => {
       res.sendFile(`${__dirname}/index.html`);
     });
-
+    this.notifiers = {};
     // this.watching = {};
     this.indices = io.of('/indices');
     this.indices.on('connection', socket => {
       socket.on('disconnect', (e) => {
         console.log('disconnect', e);
+        if (this.currentUserId){
+          this.removeNotificaciones(this.currentUserId);
+        }
       });
 
       socket.on('subscribe', room => {
@@ -36,10 +40,11 @@ class App{
         this.update(room);
       });
 
-      socket.on('prepararNotificaciones', user=>{
-        console.log('preparar notificaciones', user);
-        socket.join('notificaciones_' + user);
-        this.prepararNotificaciones(user);
+      socket.on('prepararNotificaciones', userId=>{
+        this.currentUserId = userId;
+        console.log('preparar notificaciones', userId);
+        socket.join('notificaciones_' + userId);
+        this.prepararNotificaciones(userId);
       });
     });
   }
@@ -220,15 +225,25 @@ class App{
       }
     });
   }
-  watchForNotificaciones(idforo, user, tipo){
-    if (tipo === 'msg'){
-      Vent.on('msg_' + idforo, (entry)=>{
-        this.emitNotificacion(user, tipo, idforo, entry);
-      });
-    } else {
-      Vent.on('updated_' + idforo, (entry)=>{
-        this.emitNotificacion(user, tipo, idforo, entry);
-      });
+  removeNotificaciones(userId){
+    for (const prop in this.notifiers[userId]){
+
+    }
+  }
+  watchForNotificaciones(idforo, userId, tipo){
+    this.notifiers[userId] = this.notifiers[userId] || {};
+    this.notifiers[userId][idforo] = this.notifiers[userId][idforo] || {};
+    if (!this.notifiers[userId][idforo][tipo]){
+      this.notifiers[userId][idforo][tipo] = true;
+      if (tipo === 'msg'){
+        Vent.on('msg_' + idforo, (entry) =>{
+          this.emitNotificacion(userId, tipo, idforo, entry);
+        });
+      } else {
+        Vent.on('updated_' + idforo, (entry) =>{
+          this.emitNotificacion(userId, tipo, idforo, entry);
+        });
+      }
     }
   }
   emitNotificacion(user, tipo, indice, entry){
