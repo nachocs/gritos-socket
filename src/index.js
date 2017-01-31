@@ -229,9 +229,9 @@ class App{
     for (const idforo in this.notifiers[userId]){
       for (const tipo in this.notifiers[userId][idforo]){
         if (tipo === 'msg'){
-          Vent.off('msg_' + idforo, this.notifiers[userId][idforo][tipo]);
+          Vent.removeListener('msg_' + idforo, this.notifiers[userId][idforo][tipo]);
         } else {
-          Vent.off('updated_' + idforo, this.notifiers[userId][idforo][tipo]);
+          Vent.removeListener('updated_' + idforo, this.notifiers[userId][idforo][tipo]);
         }
         delete this.notifiers[userId][idforo][tipo];
       }
