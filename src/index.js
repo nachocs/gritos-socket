@@ -17,7 +17,8 @@ class App{
     // this.watching = {};
     this.indices = io.of('/indices');
     this.indices.on('connection', socket => {
-      socket.on('disconnect', () => {
+      socket.on('disconnect', (e) => {
+        console.log('disconnect', e);
       });
 
       socket.on('subscribe', room => {
@@ -224,7 +225,7 @@ class App{
       entry,
     });
     this.indices.in('notificaciones_' + user).emit('notificaciones', {user, notificaciones});
-
+    console.log('emitida notificacion', notificaciones);
   }
 }
 
