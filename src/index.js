@@ -168,12 +168,15 @@ class App{
             const num = Indicesdb.last_num(indice);
             if (num > last + 1){
               const entry = Indicesdb.leer_entrada_indiceSync(num - 1, indice);
+              const [,indiceParent, entradaParent] = indice.match(/^(.*)\/(\d+)$/);
+              const parent = Indicesdb.leer_entrada_indiceSync(entradaParent, indiceParent);
               notificaciones.push({
                 tipo: 'mini',
                 indice,
                 diferencia: (num-last+1),
                 id: 'mini'+indice,
                 entry,
+                parent,
               });
             }
           });
