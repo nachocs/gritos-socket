@@ -51,7 +51,7 @@ class App{
       const numero = room.match(/\d+$/)[0];
       const indiceMsg = room.replace(/\/\d+$/,'');
       this.preparar_entrada(numero, indiceMsg, (entry) => {
-        console.log('updated entry(msg)', room, entry);
+        console.log('updated entry(msg)', room);
         entry = this.parsear_entrada(entry);
         Vent.emit('msg_' + room, entry);
         this.indices.in(room).emit('msg', {room, entry});
@@ -70,7 +70,7 @@ class App{
       this.preparar_entrada((Number(data)-1), indice, entry =>{
         console.log('updated entry(col)', room, entry);
         entry = this.parsear_entrada(entry);
-        Vent.emit('updated_' + room, entry);
+        Vent.emit('updated_' + room);
         this.indices.in(room).emit('updated', {room, entry});
       });
     }

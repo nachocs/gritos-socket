@@ -41,7 +41,7 @@ class Indicesdb{
   last_num(indice){ // SYNC
     let logfile, data;
     const logRoom = indice.replace(/\/$/, '').replace(/\//ig, '.');
-    if((/^gritos\//).test(indice)){
+    if((/^gritos\./).test(indice)){
       logfile = `/home/gritos/www/admin/logs/${logRoom}.num.txt`;
     } else {
       logfile = `/home/indices/admin/logs/${logRoom}.num.txt`;
