@@ -150,7 +150,7 @@ class App{
               notificaciones.push({
                 tipo: 'foro',
                 indice,
-                diferencia: (num - last + 1),
+                diferencia: (num - last),
                 id: 'mini'+indice,
                 entry,
               });
@@ -173,8 +173,8 @@ class App{
               notificaciones.push({
                 tipo: 'mini',
                 indice,
-                diferencia: (num-last+1),
-                id: 'mini'+indice,
+                diferencia: last === 0 ? (num-1) : (num-last),
+                id: 'mini' + indice,
                 entry,
                 parent,
               });
@@ -212,12 +212,7 @@ class App{
             }
           });
         }
-        notificaciones.push({
-          tipo: 'mini',
-          indice: 'prueba/137',
-          diferencia: 1,
-          id: 'minitest1',
-        });
+
         if (notificaciones.length>0){
           this.indices.in('notificaciones_' + user).emit('notificaciones', {user, notificaciones});
           console.log('enviado notificaciones ', notificaciones.length);
