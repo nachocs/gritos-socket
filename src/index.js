@@ -145,12 +145,14 @@ class App{
             this.watchForNotificaciones(indice, user, 'foro');
             const num = Indicesdb.last_num(indice);
             last = Number(last);
-            if (num > last+1){
+            if (num > last + 1){
+              const entry = Indicesdb.leer_entrada_indiceSync(num - 1, indice);
               notificaciones.push({
                 tipo: 'foro',
                 indice,
-                diferencia: (num-last+1),
+                diferencia: (num - last + 1),
                 id: 'mini'+indice,
+                entry,
               });
             }
           });
@@ -165,11 +167,13 @@ class App{
             this.watchForNotificaciones(indice, user, 'minis');
             const num = Indicesdb.last_num(indice);
             if (num > last + 1){
+              const entry = Indicesdb.leer_entrada_indiceSync(num - 1, indice);
               notificaciones.push({
                 tipo: 'mini',
                 indice,
                 diferencia: (num-last+1),
                 id: 'mini'+indice,
+                entry,
               });
             }
           });
@@ -189,7 +193,8 @@ class App{
                 indice,
                 entrada,
                 moladif: Number(entry.mola)-Number(mola),
-                id: 'msg'+indice+entrada,
+                id: 'msg' + indice + entrada,
+                entry,
               });
             }
             if (entry.nomola && entry.nomola > nomola){
@@ -197,8 +202,9 @@ class App{
                 tipo: 'msg',
                 indice,
                 entrada,
-                nomoladif: Number(entry.nomola)-Number(nomola),
+                nomoladif: Number(entry.nomola) - Number(nomola),
                 id: 'msg'+indice+entrada,
+                entry,
               });
             }
           });
