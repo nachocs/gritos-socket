@@ -139,7 +139,7 @@ class App{
         let watchForos = [];
         if (nots.foro){
           watchForos = nots.foro.split(/\|/);
-          watchForos.foreach(foro => {
+          watchForos.forEach(foro => {
             let idforo = '', last;
             [idforo, last] = foro.split(/\,/);
             this.watchForNotificaciones(idforo, user, 'foro');
@@ -157,7 +157,7 @@ class App{
         let watchMinis = [];
         if (nots.minis){
           watchMinis = nots.minis.split(/\|/);
-          watchMinis.foreach(mini => {
+          watchMinis.forEach(mini => {
             let idforo = '', last;
             [idforo, last] = mini.split(/\,/);
             last = Number(last);
@@ -175,7 +175,7 @@ class App{
         let watchMolas = [];
         if(nots.msg){
           watchMolas = nots.msg.split(/\|/);
-          watchMolas.foreach(mensaje => {
+          watchMolas.forEach(mensaje => {
             const [idforo, molas] = mensaje.split(/\,/);
             const [mola, nomola] = molas.split(/\//);
             const [,indice, entrada] = idforo.match(/^(.*)\/(\d+)$/);
