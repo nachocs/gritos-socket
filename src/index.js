@@ -226,23 +226,28 @@ class App{
     });
   }
   removeNotificaciones(userId){
-    for (const prop in this.notifiers[userId]){
-
+    for (const idforo in this.notifiers[userId]){
+      for (const tipo in this.notifiers[userId][idforo]){
+        if (tipo === 'msg'){
+          Vent.off('msg_' + idforo, this.notifiers[userId][idforo][tipo]);
+        } else {
+          Vent.off('updated_' + idforo, this.notifiers[userId][idforo][tipo]);
+        }
+        delete this.notifiers[userId][idforo][tipo];
+      }
     }
   }
   watchForNotificaciones(idforo, userId, tipo){
     this.notifiers[userId] = this.notifiers[userId] || {};
     this.notifiers[userId][idforo] = this.notifiers[userId][idforo] || {};
     if (!this.notifiers[userId][idforo][tipo]){
-      this.notifiers[userId][idforo][tipo] = true;
+      this.notifiers[userId][idforo][tipo] = (entry)=>{
+        this.emitNotificacion(userId, tipo, idforo, entry);
+      };
       if (tipo === 'msg'){
-        Vent.on('msg_' + idforo, (entry) =>{
-          this.emitNotificacion(userId, tipo, idforo, entry);
-        });
+        Vent.on('msg_' + idforo, this.notifiers[userId][idforo][tipo]);
       } else {
-        Vent.on('updated_' + idforo, (entry) =>{
-          this.emitNotificacion(userId, tipo, idforo, entry);
-        });
+        Vent.on('updated_' + idforo, this.notifiers[userId][idforo][tipo]);
       }
     }
   }
