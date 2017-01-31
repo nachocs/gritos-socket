@@ -199,6 +199,11 @@ class App{
             }
           });
         }
+        notificaciones.push({
+          tipo: 'mini',
+          indice: 'prueba/137',
+          diferencia: 1,
+        });
         if (notificaciones.length>0){
           this.indices.in('notificaciones_' + user).emit('notificaciones', {user, notificaciones});
         }
