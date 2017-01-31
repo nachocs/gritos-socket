@@ -140,16 +140,17 @@ class App{
         if (nots.foro){
           watchForos = nots.foro.split(/\|/);
           watchForos.forEach(foro => {
-            let idforo = '', last;
-            [idforo, last] = foro.split(/\,/);
-            this.watchForNotificaciones(idforo, user, 'foro');
-            const num = Indicesdb.last_num(idforo);
+            let indice = '', last;
+            [indice, last] = foro.split(/\,/);
+            this.watchForNotificaciones(indice, user, 'foro');
+            const num = Indicesdb.last_num(indice);
             last = Number(last);
             if (num > last+1){
               notificaciones.push({
                 tipo: 'foro',
-                indice: idforo,
+                indice,
                 diferencia: (num-last+1),
+                id: 'mini'+indice,
               });
             }
           });
@@ -158,16 +159,17 @@ class App{
         if (nots.minis){
           watchMinis = nots.minis.split(/\|/);
           watchMinis.forEach(mini => {
-            let idforo = '', last;
-            [idforo, last] = mini.split(/\,/);
+            let indice = '', last;
+            [indice, last] = mini.split(/\,/);
             last = Number(last);
-            this.watchForNotificaciones(idforo, user, 'minis');
-            const num = Indicesdb.last_num(idforo);
+            this.watchForNotificaciones(indice, user, 'minis');
+            const num = Indicesdb.last_num(indice);
             if (num > last + 1){
               notificaciones.push({
                 tipo: 'mini',
-                indice: idforo,
+                indice,
                 diferencia: (num-last+1),
+                id: 'mini'+indice,
               });
             }
           });
@@ -187,6 +189,7 @@ class App{
                 indice,
                 entrada,
                 moladif: Number(entry.mola)-Number(mola),
+                id: 'msg'+indice+entrada,
               });
             }
             if (entry.nomola && entry.nomola > nomola){
@@ -195,6 +198,7 @@ class App{
                 indice,
                 entrada,
                 nomoladif: Number(entry.nomola)-Number(nomola),
+                id: 'msg'+indice+entrada,
               });
             }
           });
@@ -203,9 +207,11 @@ class App{
           tipo: 'mini',
           indice: 'prueba/137',
           diferencia: 1,
+          id: 'minitest1',
         });
         if (notificaciones.length>0){
           this.indices.in('notificaciones_' + user).emit('notificaciones', {user, notificaciones});
+          console.log('enviado notificaciones ', notificaciones.length);
         }
       }
     });
