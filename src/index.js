@@ -26,17 +26,17 @@ class App{
       });
 
       socket.on('subscribe', room => {
-        console.log('joining room', room);
+        console.log('joining room', room, this.currentUserId);
         socket.join(room);
       });
 
       socket.on('unsubscribe', room => {
-        console.log('leaving room', room);
+        console.log('leaving room', room, this.currentUserId);
         socket.leave(room);
       });
 
       socket.on('update', (room) => {
-        console.log('recibido update', room);
+        console.log('recibido update', room, this.currentUserId);
         this.update(room);
       });
 
@@ -244,6 +244,7 @@ class App{
       this.notifiers[userId][idforo][tipo] = (entry)=>{
         this.emitNotificacion(userId, tipo, idforo, entry);
       };
+      console.log('watching notificaciones', idforo, userId, tipo);
       if (tipo === 'msg'){
         Vent.on('msg_' + idforo, this.notifiers[userId][idforo][tipo]);
       } else {
