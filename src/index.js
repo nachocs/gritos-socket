@@ -75,7 +75,7 @@ class App{
       this.preparar_entrada((Number(data)-1), indice, entry =>{
         console.log('updated entry(col)', room);
         entry = this.parsear_entrada(entry);
-        Vent.emit('updated_' + room);
+        Vent.emit('updated_' + room, entry);
         this.indices.in(room).emit('updated', {room, entry});
       });
     }
