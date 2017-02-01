@@ -73,7 +73,7 @@ class App{
     const data = Indicesdb.last_num(indice);
     if (data){
       this.preparar_entrada((Number(data)-1), indice, entry =>{
-        console.log('updated entry(col)', room, entry);
+        console.log('updated entry(col)', room);
         entry = this.parsear_entrada(entry);
         Vent.emit('updated_' + room);
         this.indices.in(room).emit('updated', {room, entry});
