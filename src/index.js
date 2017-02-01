@@ -156,7 +156,7 @@ class App{
                 tipo: 'foro',
                 indice,
                 diferencia: (num - last),
-                id: 'mini'+indice,
+                id: 'mini_'+indice,
                 entry,
               });
             }
@@ -179,7 +179,7 @@ class App{
                 tipo: 'mini',
                 indice,
                 diferencia: last === 0 ? (num-1) : (num-last),
-                id: 'mini' + indice,
+                id: 'mini_' + indice,
                 entry,
                 parent,
               });
@@ -201,7 +201,7 @@ class App{
                 indice,
                 entrada,
                 moladif: Number(entry.mola)-Number(mola),
-                id: 'msg' + indice + entrada,
+                id: 'msg_' + indice + entrada,
                 entry,
               });
             }
@@ -211,7 +211,7 @@ class App{
                 indice,
                 entrada,
                 nomoladif: Number(entry.nomola) - Number(nomola),
-                id: 'msg'+indice+entrada,
+                id: 'msg_'+indice+entrada,
                 entry,
               });
             }
@@ -254,12 +254,19 @@ class App{
   }
   emitNotificacion(user, tipo, indice, entry){
     const notificaciones = [];
-    notificaciones.push({
+    let obj = {
       tipo,
       indice,
       diferencia: 1,
       entry,
-    });
+      id: tipo + '_'+ indice,
+    };
+    if (tipo === 'mini'){
+      const [,indiceParent, entradaParent] = indice.match(/^(.*)\/(\d+)$/);
+      const parent = Indicesdb.leer_entrada_indiceSync(entradaParent, indiceParent);
+      obj = Object.assign({}, obj, {parent});
+    }
+    notificaciones.push(obj);
     this.indices.in('notificaciones_' + user).emit('notificaciones', {user, notificaciones});
     console.log('emitida notificacion', notificaciones);
   }
