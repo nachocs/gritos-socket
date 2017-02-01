@@ -248,7 +248,7 @@ class App{
       if (tipo === 'msg'){
         Vent.on('msg_' + idforo, this.notifiers[userId][idforo][tipo]);
       } else {
-        Vent.on('updated_' + idforo, this.notifiers[userId][idforo][tipo]);
+        Vent.on('updated_collection:' + idforo, this.notifiers[userId][idforo][tipo]);
       }
     }
   }
