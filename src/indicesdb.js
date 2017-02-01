@@ -46,6 +46,7 @@ class Indicesdb{
     } else {
       logfile = `/home/indices/admin/logs/${logRoom}.num.txt`;
     }
+    console.log('logfile es ', logfile);
     try{
       data = fs.readFileSync(logfile, { encoding: 'utf8' });
     } catch(err){
