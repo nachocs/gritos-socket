@@ -231,7 +231,7 @@ class App{
         if (tipo === 'msg'){
           Vent.removeListener('msg_' + idforo, this.notifiers[userId][idforo][tipo]);
         } else {
-          Vent.removeListener('updated_' + idforo, this.notifiers[userId][idforo][tipo]);
+          Vent.removeListener('updated_collection:' + idforo, this.notifiers[userId][idforo][tipo]);
         }
         delete this.notifiers[userId][idforo][tipo];
       }
