@@ -165,9 +165,9 @@ class App{
         let watchMinis = [];
         if (nots.minis){
           watchMinis = nots.minis.split(/\|/);
-          watchMinis.forEach(mini => {
+          watchMinis.forEach(minis => {
             let indice = '', last;
-            [indice, last] = mini.split(/\,/);
+            [indice, last] = minis.split(/\,/);
             last = Number(last);
             this.watchForNotificaciones(indice, user, 'minis');
             const num = Indicesdb.last_num(indice);
@@ -176,10 +176,10 @@ class App{
               const [,indiceParent, entradaParent] = indice.match(/^(.*)\/(\d+)$/);
               const parent = Indicesdb.leer_entrada_indiceSync(entradaParent, indiceParent);
               notificaciones.push({
-                tipo: 'mini',
+                tipo: 'minis',
                 indice,
                 diferencia: last === 0 ? (num-1) : (num-last),
-                id: 'mini_' + indice,
+                id: 'minis_' + indice,
                 entry,
                 parent,
               });
@@ -261,7 +261,7 @@ class App{
       entry,
       id: tipo + '_'+ indice,
     };
-    if (tipo === 'mini'){
+    if (tipo === 'minis'){
       const [,indiceParent, entradaParent] = indice.match(/^(.*)\/(\d+)$/);
       const parent = Indicesdb.leer_entrada_indiceSync(entradaParent, indiceParent);
       obj = Object.assign({}, obj, {parent});
