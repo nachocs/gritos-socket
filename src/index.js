@@ -156,7 +156,7 @@ class App{
                 tipo: 'foro',
                 indice,
                 diferencia: (num - last),
-                id: 'mini_'+indice,
+                id: 'foro_' + indice,
                 entry,
               });
             }
