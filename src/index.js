@@ -191,7 +191,7 @@ class App{
           watchMolas = nots.msg.split(/\|/);
           watchMolas.forEach(mensaje => {
             const [idforo, molas] = mensaje.split(/\,/);
-            const [mola, nomola] = molas.split(/\//);
+            const [mola, nomola, love] = molas.split(/\//);
             const [,indice, entrada] = idforo.match(/^(.*)\/(\d+)$/);
             const entry = Indicesdb.leer_entrada_indiceSync(entrada, indice);
             this.watchForNotificaciones(idforo, user, 'msg');
@@ -201,7 +201,7 @@ class App{
                 indice,
                 entrada,
                 moladif: Number(entry.mola)-Number(mola),
-                id: 'msg_' + indice + entrada,
+                id: 'msg_' + indice + '/' + entrada,
                 entry,
               });
             }
@@ -211,7 +211,17 @@ class App{
                 indice,
                 entrada,
                 nomoladif: Number(entry.nomola) - Number(nomola),
-                id: 'msg_'+indice+entrada,
+                id: 'msg_' + indice + '/' + entrada,
+                entry,
+              });
+            }
+            if (entry.love && entry.love > love){
+              notificaciones.push({
+                tipo: 'msg',
+                indice,
+                entrada,
+                lovedif: Number(entry.love) - Number(love),
+                id: 'msg_' + indice + '/' + entrada,
                 entry,
               });
             }
@@ -259,7 +269,7 @@ class App{
       indice,
       diferencia: 1,
       entry,
-      id: tipo + '_'+ indice,
+      id: tipo + '_' + indice,
     };
     if (tipo === 'minis'){
       const [,indiceParent, entradaParent] = indice.match(/^(.*)\/(\d+)$/);
