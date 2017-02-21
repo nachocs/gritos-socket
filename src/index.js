@@ -35,9 +35,9 @@ class App{
         socket.leave(room);
       });
 
-      socket.on('update', (room) => {
-        console.log('recibido update', room, this.currentUserId);
-        this.update(room);
+      socket.on('update', (room, subtipo) => {
+        console.log('recibido update', room, subtipo, this.currentUserId);
+        this.update(room, subtipo);
       });
 
       socket.on('prepararNotificaciones', userId=>{
@@ -49,7 +49,7 @@ class App{
     });
   }
 
-  update (room){
+  update (room, subtipo){
     if ((/collection:/).test(room)){ // a collection
       this.readCollection(room);
     } else { // a message
@@ -58,7 +58,7 @@ class App{
       this.preparar_entrada(numero, indiceMsg, (entry) => {
         console.log('updated entry(msg)', room);
         entry = this.parsear_entrada(entry);
-        Vent.emit('msg_' + room, entry);
+        Vent.emit('msg_' + room, entry, subtipo);
         this.indices.in(room).emit('msg', {room, entry});
       });
     }
@@ -251,8 +251,8 @@ class App{
     this.notifiers[userId] = this.notifiers[userId] || {};
     this.notifiers[userId][idforo] = this.notifiers[userId][idforo] || {};
     if (!this.notifiers[userId][idforo][tipo]){
-      this.notifiers[userId][idforo][tipo] = (entry)=>{
-        this.emitNotificacion(userId, tipo, idforo, entry);
+      this.notifiers[userId][idforo][tipo] = (entry, subtipo)=>{
+        this.emitNotificacion(userId, tipo, idforo, entry, subtipo);
       };
       console.log('watching notificaciones', idforo, userId, tipo);
       if (tipo === 'msg'){
@@ -262,7 +262,7 @@ class App{
       }
     }
   }
-  emitNotificacion(user, tipo, indice, entry){
+  emitNotificacion(user, tipo, indice, entry, subtipo){
     const notificaciones = [];
     let obj = {
       tipo,
@@ -275,6 +275,9 @@ class App{
       const [,indiceParent, entradaParent] = indice.match(/^(.*)\/(\d+)$/);
       const parent = Indicesdb.leer_entrada_indiceSync(entradaParent, indiceParent);
       obj = Object.assign({}, obj, {parent});
+    }
+    if (tipo === 'msg' && typeof subtipo === 'string' && subtipo.length > 0){
+      obj = Object.assign({}, obj, {subtipo});
     }
     notificaciones.push(obj);
     this.indices.in('notificaciones_' + user).emit('notificaciones', {user, notificaciones});
