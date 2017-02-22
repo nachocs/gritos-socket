@@ -56,7 +56,7 @@ class App{
       const numero = room.match(/\d+$/)[0];
       const indiceMsg = room.replace(/\/\d+$/,'');
       this.preparar_entrada(numero, indiceMsg, (entry) => {
-        console.log('updated entry(msg)', room);
+        console.log('updated entry(msg)', room, subtipo, ciudadano);
         entry = this.parsear_entrada(entry);
         Vent.emit('msg_' + room, entry, subtipo, ciudadano);
         this.indices.in(room).emit('msg', {room, entry});
@@ -258,6 +258,7 @@ class App{
     this.notifiers[userId][idforo] = this.notifiers[userId][idforo] || {};
     if (!this.notifiers[userId][idforo][tipo]){
       this.notifiers[userId][idforo][tipo] = (entry, subtipo, ciudadano)=>{
+        console.log('emitNotificacion', userId, tipo, idforo, entry, subtipo, ciudadano);
         this.emitNotificacion(userId, tipo, idforo, entry, subtipo, ciudadano);
       };
       console.log('watching notificaciones', idforo, userId, tipo);
