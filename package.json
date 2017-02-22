@@ -1,6 +1,6 @@
 {
   "name": "gritos-socket",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Socket system for gritos.com",
   "scripts": {
     "lint": "eslint .",
