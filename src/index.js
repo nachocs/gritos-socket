@@ -200,9 +200,10 @@ class App{
                 tipo: 'msg',
                 indice,
                 entrada,
-                moladif: Number(entry.mola)-Number(mola),
+                diferencia: Number(entry.mola)-Number(mola),
                 id: 'msg_' + indice + '/' + entrada,
                 entry,
+                subtipo: 'mola',
               });
             }
             if (entry.nomola && entry.nomola > nomola){
@@ -210,9 +211,10 @@ class App{
                 tipo: 'msg',
                 indice,
                 entrada,
-                nomoladif: Number(entry.nomola) - Number(nomola),
+                diferencia: Number(entry.nomola) - Number(nomola),
                 id: 'msg_' + indice + '/' + entrada,
                 entry,
+                subtipo: 'nomola',
               });
             }
             if (entry.love && entry.love > love){
@@ -220,9 +222,10 @@ class App{
                 tipo: 'msg',
                 indice,
                 entrada,
-                lovedif: Number(entry.love) - Number(love),
+                diferencia: Number(entry.love) - Number(love),
                 id: 'msg_' + indice + '/' + entrada,
                 entry,
+                subtipo: 'love',
               });
             }
           });
