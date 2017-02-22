@@ -8,6 +8,7 @@ import Vent from './vent';
 // '/Users/nacho/Google Drive/dreamers/dreamers/datos/indices/peliculas/'
 class App{
   constructor(){
+    const self = this;
     server.listen(8081, () => {
       console.log('listening port 8081.');
     });
@@ -17,11 +18,11 @@ class App{
     this.notifiers = {};
     // this.watching = {};
     this.indices = io.of('/indices');
-    this.indices.on('connection', socket => {
+    this.indices.on('connection', function(socket){
       socket.on('disconnect', (e) => {
         console.log('disconnect', e);
-        if (this.currentUserId){
-          this.removeNotificaciones(this.currentUserId);
+        if (self.currentUserId){
+          self.removeNotificaciones(this.currentUserId);
         }
       });
 
@@ -37,14 +38,14 @@ class App{
 
       socket.on('update', (room, subtipo, ciudadano) => {
         console.log('recibido update', room, subtipo, ciudadano, this.currentUserId);
-        this.update(room, subtipo, ciudadano);
+        self.update(room, subtipo, ciudadano);
       });
 
       socket.on('prepararNotificaciones', userId=>{
         this.currentUserId = userId;
         console.log('preparar notificaciones', userId);
         socket.join('notificaciones_' + userId);
-        this.prepararNotificaciones(userId);
+        self.prepararNotificaciones(userId);
       });
     });
   }
