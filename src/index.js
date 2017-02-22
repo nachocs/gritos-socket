@@ -198,12 +198,12 @@ class App{
             function notifyMolas(mola, molaValue, indice, entrada, entry){
               const lastMolaArr = entry[mola + 'log'].split(/\|/);
               const lastMolaLog = lastMolaArr[lastMolaArr.length-1];
-              let citizen;
+              let citizen, object;
               if (lastMolaLog){
                 citizen = Indicesdb.leer_entrada_indiceSync(lastMolaLog, 'ciudadanos');
               }
               if (entry[mola] && entry[mola] > molaValue){
-                const object = {
+                object = {
                   tipo: 'msg',
                   indice,
                   entrada,
@@ -213,7 +213,7 @@ class App{
                   subtipo: mola,
                 };
                 if (lastMolaLog){
-                  object = Object.assign({}, object, 
+                  object = Object.assign({}, object,
                     {
                       ciudadano: lastMolaLog,
                       citizen: {
