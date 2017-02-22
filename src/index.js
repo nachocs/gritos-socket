@@ -196,11 +196,13 @@ class App{
             const entry = Indicesdb.leer_entrada_indiceSync(entrada, indice);
             this.watchForNotificaciones(idforo, user, 'msg');
             function notifyMolas(mola, molaValue, indice, entrada, entry){
-              const lastMolaArr = entry[mola + 'log'].split(/\|/);
-              const lastMolaLog = lastMolaArr[lastMolaArr.length-1];
-              let citizen, object;
-              if (lastMolaLog){
-                citizen = Indicesdb.leer_entrada_indiceSync(lastMolaLog, 'ciudadanos');
+              let citizen, object, lastMolaLog;
+              if (entry[mola + 'log']){
+                const lastMolaArr = entry[mola + 'log'].split(/\|/);
+                lastMolaLog = lastMolaArr[lastMolaArr.length-1];
+                if (lastMolaLog){
+                  citizen = Indicesdb.leer_entrada_indiceSync(lastMolaLog, 'ciudadanos');
+                }
               }
               if (entry[mola] && entry[mola] > molaValue){
                 object = {
