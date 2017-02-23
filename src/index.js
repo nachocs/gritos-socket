@@ -59,8 +59,17 @@ class App{
       this.preparar_entrada(numero, indiceMsg, (entry) => {
         console.log('updated entry(msg)', room, subtipo, ciudadano);
         entry = this.parsear_entrada(entry);
-        Vent.emit('msg_' + room, entry, subtipo, ciudadano);
         this.indices.in(room).emit('msg', {room, entry});
+        Vent.emit('msg_' + room, entry, subtipo, ciudadano);
+        if (room.match(/\d+$/)){ // minis
+          this.watchForNotificaciones(entry.INDICE + '/' + entry.ID, entry.ciudadano, 'msg');
+          this.watchForNotificaciones(entry.INDICE, entry.ciudadano, 'minis');
+        } else { // foro
+          this.watchForNotificaciones(entry.INDICE , entry.ciudadano, 'foro');
+          this.watchForNotificaciones(entry.INDICE + '/' + entry.ID, entry.ciudadano, 'msg');
+          this.watchForNotificaciones(entry.INDICE + '/' + entry.ID, entry.ciudadano, 'minis');
+        }
+
       });
     }
   }
