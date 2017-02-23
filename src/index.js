@@ -275,7 +275,7 @@ class App{
         Vent.on('msg_' + idforo, this.notifiers[userId][idforo][tipo]);
       } else {
         console.log('subscrito a ', idforo);
-        Vent.on('updated_collection:' + idforo, this.notifiers[userId][idforo][tipo]);
+        Vent.on('updated_collection:' + idforo.replace(/gritos\//,'').replace(/foros\//,''), this.notifiers[userId][idforo][tipo]);
       }
     }
   }
