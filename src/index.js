@@ -220,7 +220,7 @@ class App{
                   indice,
                   entrada,
                   diferencia: Number(entry[mola])-Number(molaValue),
-                  id: 'msg_' + indice + '/' + entrada,
+                  id: 'msg' + '.' + mola + '_' + indice + '/' + entrada,
                   entry,
                   subtipo: mola,
                 };
@@ -281,12 +281,16 @@ class App{
   }
   emitNotificacion(user, tipo, indice, entry, subtipo, ciudadano){
     const notificaciones = [];
+    let id = tipo + '_' + indice;
+    if (subtipo){
+      id = tipo + '.' + subtipo + '_' + indice;
+    }
     let obj = {
       tipo,
       indice,
       diferencia: 1,
       entry,
-      id: tipo + '_' + indice,
+      id,
     };
     if (tipo === 'minis'){
       const [,indiceParent, entradaParent] = indice.match(/^(.*)\/(\d+)$/);
