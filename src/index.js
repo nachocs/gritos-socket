@@ -268,7 +268,6 @@ class App{
     this.notifiers[userId][idforo] = this.notifiers[userId][idforo] || {};
     if (!this.notifiers[userId][idforo][tipo]){
       this.notifiers[userId][idforo][tipo] = (entry, subtipo, ciudadano)=>{
-        console.log('emitNotificacion', userId, tipo, idforo, entry, subtipo, ciudadano);
         this.emitNotificacion(userId, tipo, idforo, entry, subtipo, ciudadano);
       };
       console.log('watching notificaciones', idforo, userId, tipo);
