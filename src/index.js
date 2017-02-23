@@ -274,6 +274,7 @@ class App{
       if (tipo === 'msg'){
         Vent.on('msg_' + idforo, this.notifiers[userId][idforo][tipo]);
       } else {
+        console.log('subscrito a ', idforo);
         Vent.on('updated_collection:' + idforo, this.notifiers[userId][idforo][tipo]);
       }
     }
@@ -311,7 +312,7 @@ class App{
     }
     notificaciones.push(obj);
     this.indices.in('notificaciones_' + user).emit('notificaciones', {user, notificaciones});
-    console.log('emitida notificacion', notificaciones);
+    console.log('emitida notificacion', tipo, indice, subtipo, ciudadano);
   }
 }
 
