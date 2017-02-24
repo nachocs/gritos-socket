@@ -61,7 +61,9 @@ class App{
         entry = this.parsear_entrada(entry);
         this.indices.in(room).emit('msg', {room, entry});
         Vent.emit('msg_' + room, entry, subtipo, ciudadano);
-        if (room.match(/\d+$/)){ // minis
+        if (room.match(/ciudadanos/)){ // ciudadano
+          this.watchForNotificaciones(entry.INDICE, entry.ciudadano, 'yo');
+        } else if (room.match(/\d+$/)){ // minis
           this.watchForNotificaciones(entry.INDICE + '/' + entry.ID, entry.ciudadano, 'msg');
           this.watchForNotificaciones(entry.INDICE, entry.ciudadano, 'minis');
         } else { // foro
@@ -152,6 +154,26 @@ class App{
 // &add_notificaciones($CIUDADANO{'NUMERO_ENTRADA'}, 'minis', $IDforo . '/' . $Num_Entries, '0');
       if(nots){
         let watchForos = [];
+        this.watchForNotificaciones('ciudadanos/' + user, user, 'yo');
+        if (nots.yo){
+          let last;
+          last = nots.yo;
+          const num = Indicesdb.last_num('ciudadanos/' + user);
+          last = Number(last);
+          if (num > last + 1){
+            const entry = Indicesdb.leer_entrada_indiceSync(num - 1, 'ciudadanos/' + user);
+            notificaciones.push({
+              tipo: 'yo',
+              indice: 'ciudadanos/' + user,
+              diferencia: (num - last),
+              id: 'yo',
+              entry,
+            });
+          }
+        } else { // initialize own notificaciones
+          const num = Indicesdb.last_num('ciudadanos/' + user);
+          nots = Indicesdb.modificar_entrada_indiceSync('notificaciones', user, 'yo', num);
+        }
         if (nots.foro){
           watchForos = nots.foro.split(/\|/);
           watchForos.forEach(foro => {

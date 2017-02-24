@@ -1,9 +1,12 @@
 import fs from 'fs';
 const directorio = '/home/dreamers/datos/indices/';
+const db_delim = '|';
+
+// RECUERDA QUE ESTAS RUTIINAS NO SUBINDEXAN
 
 class Indicesdb{
   leer_entrada_indice(entrada, indice, callback){
-    fs.readFile(directorio + indice + '/' + entrada + '.txt', { encoding: 'utf8' }, (entryErr, entryData) => {
+    fs.readFile(directorio + indice + '/' + entrada + '.txt', { encoding: 'iso-8859-1' }, (entryErr, entryData) => {
       if (entryErr){
         console.log('leer entrada indice Error', entryErr);
         callback(null);
@@ -30,13 +33,64 @@ class Indicesdb{
   leer_entrada_indiceSync(entrada, indice){
     let entry;
     try{
-      entry = fs.readFileSync(directorio + indice + '/' + entrada + '.txt', { encoding: 'utf8' });
+      entry = fs.readFileSync(directorio + indice + '/' + entrada + '.txt', { encoding: 'iso-8859-1' });
     } catch(err){
       console.log('leer entrada indice sync Error', err);
       return null;
     }
     entry = this.parse(entry, indice, entrada);
     return entry;
+  }
+  modificar_entrada_indiceSync(indice, entrada, subindice, subdato){
+    const entry = this.leer_entrada_indiceSync(entrada, indice);
+    if (!entry){return null;}
+    entry[subindice] = subdato;
+    this.escribir_entrada_indiceSync(indice, entrada, entry);
+    return entry;
+  }
+  escribir_entrada_indiceSync(indice, entrada, rec){
+    if (!indice || !entrada || !rec){
+      return null;
+    }
+    let fichero = '';
+    // inicio algunas variables
+    const time = Math.floor( Date.now() / 1000 );
+    rec['FECHA_M'] = time;  // Fecha de modificación: siempre se sobreescribe
+    if (!rec['FECHA']){ rec['FECHA'] = time; }
+    if (!rec['FECHA_A']){ rec['FECHA_A'] = time; } // Fecha de creación. solo una vez.
+    fichero += 'ID' + db_delim + entrada + '\n';
+
+    Object.keys(rec).forEach((key)=>{
+      if((key == 'indice') || (key == 'ESTILO_FORO') || (key == 'Post') || (key == 'foro') || (key == 'ID') || (key == 'Submit')){
+        return;
+      } else {
+        rec[key] = this.prepararparadb(rec[key]);
+        fichero += key + db_delim + rec[key] + '\n';
+      }
+    });
+    try{
+      fs.writeFileSync(directorio + indice + '/' + entrada + '.txt', fichero, { encoding: 'iso-8859-1' });
+    } catch(err){
+      console.log('escribir entrada indice sync Error', err);
+      return null;
+    }
+  }
+
+// rutina de apoyo db
+// usar prepararparadb(variable) para devolver la variable preparada para escribir en la db
+// usar prepararparadb(variable,'a') para devolver la variable preparada para leer de la db
+  prepararparadb(entrada, variante){
+    if (variante){
+      entrada = entrada.replace(/~~/, '|');
+      entrada = entrada.replace(/``/, '\n');
+    } else{
+      entrada = entrada.replace(/\|/, '~~');
+      entrada = entrada.replace(/\cM\n/, '\n');
+      entrada = entrada.replace(/\n\cM/, '\n');
+      entrada = entrada.replace(/\cM/, '\n');
+      entrada = entrada.replace(/\n/, '``');
+    }
+    return (entrada);
   }
   last_num(indice){ // SYNC
     let logfile, data;
