@@ -81,17 +81,19 @@ class Indicesdb{
 // usar prepararparadb(variable) para devolver la variable preparada para escribir en la db
 // usar prepararparadb(variable,'a') para devolver la variable preparada para leer de la db
   prepararparadb(entrada, variante){
-    if (variante){
-      entrada = entrada.replace(/~~/, '|');
-      entrada = entrada.replace(/``/, '\n');
-    } else{
-      entrada = entrada.replace(/\|/, '~~');
-      entrada = entrada.replace(/\cM\n/, '\n');
-      entrada = entrada.replace(/\n\cM/, '\n');
-      entrada = entrada.replace(/\cM/, '\n');
-      entrada = entrada.replace(/\n/, '``');
+    if (entrada && typeof entrada === 'string'){
+      if (variante){
+        entrada = entrada.replace(/~~/, '|');
+        entrada = entrada.replace(/``/, '\n');
+      } else{
+        entrada = entrada.replace(/\|/, '~~');
+        entrada = entrada.replace(/\cM\n/, '\n');
+        entrada = entrada.replace(/\n\cM/, '\n');
+        entrada = entrada.replace(/\cM/, '\n');
+        entrada = entrada.replace(/\n/, '``');
+      }
     }
-    return (entrada);
+    return entrada;
   }
   last_num(indice){ // SYNC
     let logfile, data;
