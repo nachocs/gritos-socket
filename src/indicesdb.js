@@ -79,14 +79,14 @@ class Indicesdb{
   prepararparadb(entrada, variante){
     if (entrada && typeof entrada === 'string'){
       if (variante){
-        entrada = entrada.replace(/~~/, '|');
-        entrada = entrada.replace(/``/, '\n');
+        entrada = entrada.replace(/~~/g, '|');
+        entrada = entrada.replace(/``/g, '\n');
       } else{
-        entrada = entrada.replace(/\|/, '~~');
-        entrada = entrada.replace(/\cM\n/, '\n');
-        entrada = entrada.replace(/\n\cM/, '\n');
-        entrada = entrada.replace(/\cM/, '\n');
-        entrada = entrada.replace(/\n/, '``');
+        entrada = entrada.replace(/\|/g, '~~');
+        entrada = entrada.replace(/\cM\n/g, '\n');
+        entrada = entrada.replace(/\n\cM/g, '\n');
+        entrada = entrada.replace(/\cM/g, '\n');
+        entrada = entrada.replace(/\n/g, '``');
       }
     }
     return entrada;
