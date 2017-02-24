@@ -59,15 +59,11 @@ class Indicesdb{
     rec['FECHA_M'] = time;  // Fecha de modificación: siempre se sobreescribe
     if (!rec['FECHA']){ rec['FECHA'] = time; }
     if (!rec['FECHA_A']){ rec['FECHA_A'] = time; } // Fecha de creación. solo una vez.
-    fichero += 'ID' + db_delim + entrada + '\n';
-
+    rec['ID'] = entrada;
+    rec['INDICE'] = indice;
     Object.keys(rec).forEach((key)=>{
-      if((key == 'indice') || (key == 'ESTILO_FORO') || (key == 'Post') || (key == 'foro') || (key == 'ID') || (key == 'Submit')){
-        return;
-      } else {
-        rec[key] = this.prepararparadb(rec[key]);
-        fichero += key + db_delim + rec[key] + '\n';
-      }
+      rec[key] = this.prepararparadb(rec[key]);
+      fichero += key + db_delim + rec[key] + '\n';
     });
     try{
       fs.writeFileSync(directorio + indice + '/' + entrada + '.txt', fichero, { encoding: 'utf-8' });
