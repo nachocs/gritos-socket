@@ -1,4 +1,5 @@
 import fs from 'fs';
+
 const directorio = '/home/dreamers/datos/indices/';
 const db_delim = '|';
 
@@ -6,7 +7,7 @@ const db_delim = '|';
 
 class Indicesdb{
   leer_entrada_indice(entrada, indice, callback){
-    fs.readFile(directorio + indice + '/' + entrada + '.txt', { encoding: 'iso-8859-1' }, (entryErr, entryData) => {
+    fs.readFile(directorio + indice + '/' + entrada + '.txt', { encoding: 'utf-8' }, (entryErr, entryData) => {
       if (entryErr){
         console.log('leer entrada indice Error', entryErr);
         callback(null);
@@ -33,7 +34,7 @@ class Indicesdb{
   leer_entrada_indiceSync(entrada, indice){
     let entry;
     try{
-      entry = fs.readFileSync(directorio + indice + '/' + entrada + '.txt', { encoding: 'iso-8859-1' });
+      entry = fs.readFileSync(directorio + indice + '/' + entrada + '.txt', { encoding: 'utf-8' });
     } catch(err){
       console.log('leer entrada indice sync Error', err);
       return null;
@@ -69,7 +70,7 @@ class Indicesdb{
       }
     });
     try{
-      fs.writeFileSync(directorio + indice + '/' + entrada + '.txt', fichero, { encoding: 'iso-8859-1' });
+      fs.writeFileSync(directorio + indice + '/' + entrada + '.txt', fichero, { encoding: 'utf-8' });
     } catch(err){
       console.log('escribir entrada indice sync Error', err);
       return null;
