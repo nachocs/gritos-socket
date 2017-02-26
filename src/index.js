@@ -205,24 +205,24 @@ class App{
             const [,indice, entrada] = idforo.match(/^(.*)\/(\d+)$/);
             const entry = Indicesdb.leer_entrada_indiceSync(entrada, indice);
             this.watchForNotificaciones(idforo, user, 'msg');
-            function notifyMolas(mola, molaValue, indice, entrada, entry){
-              if (!entry){return;}
-              let lastMolaLog;
-              if (entry[mola + 'log']){
-                const lastMolaArr = entry[mola + 'log'].split(/\|/);
-                lastMolaLog = lastMolaArr[lastMolaArr.length-1];
-              }
-              if (entry[mola] && entry[mola] > molaValue){
-                this.emitNotificacion(user, 'msg', indice, entry, mola, lastMolaLog, Number(entry[mola])-Number(molaValue));
-              }
-            }
-            notifyMolas('mola', mola, indice, entrada, entry);
-            notifyMolas('nomola', nomola, indice, entrada, entry);
-            notifyMolas('love', love, indice, entrada, entry);
+            this.notifyMolas(user, 'mola', mola, indice, entrada, entry);
+            this.notifyMolas(user, 'nomola', nomola, indice, entrada, entry);
+            this.notifyMolas(user, 'love', love, indice, entrada, entry);
           });
         }
       }
     });
+  }
+  notifyMolas(user, mola, molaValue, indice, entrada, entry){
+    if (!entry){return;}
+    let lastMolaLog;
+    if (entry[mola + 'log']){
+      const lastMolaArr = entry[mola + 'log'].split(/\|/);
+      lastMolaLog = lastMolaArr[lastMolaArr.length-1];
+    }
+    if (entry[mola] && entry[mola] > molaValue){
+      this.emitNotificacion(user, 'msg', indice, entry, mola, lastMolaLog, Number(entry[mola])-Number(molaValue));
+    }
   }
   removeNotificaciones(userId){
     for (const idforo in this.notifiers[userId]){
