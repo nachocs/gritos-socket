@@ -146,7 +146,6 @@ class App{
     });
   }
   prepararNotificaciones(user){
-    const notificaciones = [];
     if (!user.match(/^\d+$/)){return;}
     Indicesdb.leer_entrada_indice(user, 'notificaciones', nots => {
 // &add_notificaciones($CIUDADANO{'NUMERO_ENTRADA'}, 'foro', $IDforo, $Num_Entries);
@@ -162,19 +161,7 @@ class App{
           last = Number(last);
           if (num > last + 1){
             const entry = Indicesdb.leer_entrada_indiceSync(num - 1, 'ciudadanos/' + user);
-            const parent = Indicesdb.leer_entrada_indiceSync(user, 'ciudadanos');
-            notificaciones.push({
-              tipo: 'yo',
-              indice: 'ciudadanos/' + user,
-              diferencia: (num - last),
-              id: 'yo',
-              entry,
-              parent:{
-                alias_principal: parent.alias_principal,
-                dreamy_principal: parent.dreamy_principal,
-                ID: parent.ID,
-              },
-            });
+            this.emitNotificacion(user, 'yo', 'ciudadanos/' + user, entry, null, null, (num - last));
           }
         } else { // initialize own notificaciones
           const num = Indicesdb.last_num('ciudadanos/' + user);
@@ -190,13 +177,7 @@ class App{
             last = Number(last);
             if (num > last + 1){
               const entry = Indicesdb.leer_entrada_indiceSync(num - 1, indice);
-              notificaciones.push({
-                tipo: 'foro',
-                indice,
-                diferencia: (num - last),
-                id: 'foro_' + indice,
-                entry,
-              });
+              this.emitNotificacion(user, 'foro', indice, entry, null, null, (num - last));
             }
           });
         }
@@ -211,16 +192,7 @@ class App{
             const num = Indicesdb.last_num(indice);
             if (num > last + 1){
               const entry = Indicesdb.leer_entrada_indiceSync(num - 1, indice);
-              const [,indiceParent, entradaParent] = indice.match(/^(.*)\/(\d+)$/);
-              const parent = Indicesdb.leer_entrada_indiceSync(entradaParent, indiceParent);
-              notificaciones.push({
-                tipo: 'minis',
-                indice,
-                diferencia: last === 0 ? (num-1) : (num-last),
-                id: 'minis_' + indice,
-                entry,
-                parent,
-              });
+              this.emitNotificacion(user, 'minis', indice, entry, null, null, last === 0 ? (num-1) : (num-last));
             }
           });
         }
@@ -235,47 +207,19 @@ class App{
             this.watchForNotificaciones(idforo, user, 'msg');
             function notifyMolas(mola, molaValue, indice, entrada, entry){
               if (!entry){return;}
-              let citizen, object, lastMolaLog;
+              let lastMolaLog;
               if (entry[mola + 'log']){
                 const lastMolaArr = entry[mola + 'log'].split(/\|/);
                 lastMolaLog = lastMolaArr[lastMolaArr.length-1];
-                if (lastMolaLog){
-                  citizen = Indicesdb.leer_entrada_indiceSync(lastMolaLog, 'ciudadanos');
-                }
               }
               if (entry[mola] && entry[mola] > molaValue){
-                object = {
-                  tipo: 'msg',
-                  indice,
-                  entrada,
-                  diferencia: Number(entry[mola])-Number(molaValue),
-                  id: 'msg' + '.' + mola + '_' + indice + '/' + entrada,
-                  entry,
-                  subtipo: mola,
-                };
-                if (lastMolaLog){
-                  object = Object.assign({}, object,
-                    {
-                      ciudadano: lastMolaLog,
-                      citizen: {
-                        alias_principal: citizen.alias_principal,
-                        dreamy_principal: citizen.dreamy_principal,
-                      },
-                    }
-                  );
-                }
-                notificaciones.push(object);
+                this.emitNotificacion(user, 'msg', indice, entry, mola, lastMolaLog, Number(entry[mola])-Number(molaValue));
               }
             }
             notifyMolas('mola', mola, indice, entrada, entry);
             notifyMolas('nomola', nomola, indice, entrada, entry);
             notifyMolas('love', love, indice, entrada, entry);
           });
-        }
-
-        if (notificaciones.length>0){
-          this.indices.in('notificaciones_' + user).emit('notificaciones', {user, notificaciones});
-          console.log('enviado notificaciones ', notificaciones.length);
         }
       }
     });
@@ -308,7 +252,7 @@ class App{
       }
     }
   }
-  emitNotificacion(user, tipo, indice, entry, subtipo, ciudadano){
+  emitNotificacion(user, tipo, indice, entry, subtipo, ciudadano, diferencia){
     const notificaciones = [];
     let id = tipo + '_' + indice;
     if (subtipo){
@@ -317,7 +261,7 @@ class App{
     let obj = {
       tipo,
       indice,
-      diferencia: 1,
+      diferencia: diferencia || 1,
       entry,
       id,
     };
