@@ -20,7 +20,7 @@ class App{
     this.indices = io.of('/indices');
     this.indices.on('connection', function(socket){
       socket.on('disconnect', (e) => {
-        console.log('disconnect', e);
+        console.log('desconectado', e);
         if (self.currentUserId){
           self.removeNotificaciones(this.currentUserId);
         }
