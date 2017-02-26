@@ -227,6 +227,7 @@ class App{
   removeNotificaciones(userId){
     for (const idforo in this.notifiers[userId]){
       for (const tipo in this.notifiers[userId][idforo]){
+        console.log('removeListener', userId, idforo, tipo);
         if (tipo === 'msg'){
           Vent.removeListener('msg_' + idforo, this.notifiers[userId][idforo][tipo]);
         } else {
