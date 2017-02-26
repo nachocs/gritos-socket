@@ -21,7 +21,7 @@ class App{
     this.indices.on('connection', function(socket){
       socket.on('disconnect', (e) => {
         console.log('desconectado', e);
-        if (self.currentUserId){
+        if (this.currentUserId){
           self.removeNotificaciones(this.currentUserId);
         }
       });
