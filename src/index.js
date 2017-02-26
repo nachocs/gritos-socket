@@ -228,6 +228,7 @@ class App{
             const entry = Indicesdb.leer_entrada_indiceSync(entrada, indice);
             this.watchForNotificaciones(idforo, user, 'msg');
             function notifyMolas(mola, molaValue, indice, entrada, entry){
+              if (!entry){return;}
               let citizen, object, lastMolaLog;
               if (entry[mola + 'log']){
                 const lastMolaArr = entry[mola + 'log'].split(/\|/);
