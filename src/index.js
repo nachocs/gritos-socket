@@ -162,12 +162,18 @@ class App{
           last = Number(last);
           if (num > last + 1){
             const entry = Indicesdb.leer_entrada_indiceSync(num - 1, 'ciudadanos/' + user);
+            const parent = Indicesdb.leer_entrada_indiceSync(user, 'ciudadanos');
             notificaciones.push({
               tipo: 'yo',
               indice: 'ciudadanos/' + user,
               diferencia: (num - last),
               id: 'yo',
               entry,
+              parent:{
+                alias_principal: parent.alias_principal,
+                dreamy_principal: parent.dreamy_principal,
+                ID: parent.ID,
+              },
             });
           }
         } else { // initialize own notificaciones
@@ -330,6 +336,17 @@ class App{
         citizen: {
           alias_principal: citizen.alias_principal,
           dreamy_principal: citizen.dreamy_principal,
+        },
+      });
+    }
+    if (entry && entry.INDICE.match(/^ciudadanos/)){
+      const [,citi] = entry.INDICE.match(/ciudadanos\/(\d+)/);
+      const citizen = Indicesdb.leer_entrada_indiceSync(citi, 'ciudadanos');
+      obj = Object.assign({}, obj, {
+        parent: {
+          alias_principal: citizen.alias_principal,
+          dreamy_principal: citizen.dreamy_principal,
+          ID: citizen.ID,
         },
       });
     }
