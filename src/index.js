@@ -343,7 +343,7 @@ class App{
       const [,citi] = entry.INDICE.match(/ciudadanos\/(\d+)/);
       const citizen = Indicesdb.leer_entrada_indiceSync(citi, 'ciudadanos');
       obj = Object.assign({}, obj, {
-        parent: {
+        head: {
           alias_principal: citizen.alias_principal,
           dreamy_principal: citizen.dreamy_principal,
           ID: citizen.ID,
