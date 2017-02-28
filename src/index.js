@@ -61,17 +61,18 @@ class App{
         entry = this.parsear_entrada(entry);
         this.indices.in(room).emit('msg', {room, entry});
         Vent.emit('msg_' + room, entry, subtipo, ciudadano);
-        if (room.match(/ciudadanos/)){ // ciudadano
-          this.watchForNotificaciones(entry.INDICE, entry.ciudadano, 'yo');
-        } else if (room.match(/\d+$/)){ // minis
-          this.watchForNotificaciones(entry.INDICE + '/' + entry.ID, entry.ciudadano, 'msg');
-          this.watchForNotificaciones(entry.INDICE, entry.ciudadano, 'minis');
-        } else { // foro
-          this.watchForNotificaciones(entry.INDICE , entry.ciudadano, 'foro');
-          this.watchForNotificaciones(entry.INDICE + '/' + entry.ID, entry.ciudadano, 'msg');
-          this.watchForNotificaciones(entry.INDICE + '/' + entry.ID, entry.ciudadano, 'minis');
+        if (!subtipo){
+          if (room.match(/ciudadanos/)){ // ciudadano
+            this.watchForNotificaciones(entry.INDICE, entry.ciudadano, 'yo');
+          } else if (room.match(/\d+$/)){ // minis
+            this.watchForNotificaciones(entry.INDICE + '/' + entry.ID, entry.ciudadano, 'msg');
+            this.watchForNotificaciones(entry.INDICE, entry.ciudadano, 'minis');
+          } else { // foro
+            this.watchForNotificaciones(entry.INDICE , entry.ciudadano, 'foro');
+            this.watchForNotificaciones(entry.INDICE + '/' + entry.ID, entry.ciudadano, 'msg');
+            this.watchForNotificaciones(entry.INDICE + '/' + entry.ID, entry.ciudadano, 'minis');
+          }
         }
-
       });
     }
   }
@@ -248,7 +249,6 @@ class App{
       if (tipo === 'msg'){
         Vent.on('msg_' + idforo, this.notifiers[userId][idforo][tipo]);
       } else {
-        console.log('subscrito a ', idforo);
         Vent.on('updated_collection:' + idforo.replace(/gritos\//,'').replace(/foros\//,''), this.notifiers[userId][idforo][tipo]);
       }
     }
