@@ -1,6 +1,14 @@
 #!/usr/bin/env node
+import fs from 'fs';
+
 const app = require('express')();
-const server = require('http').Server(app);
+const options = {
+  key: fs.readFileSync('/etc/letsencrypt/live/gritos.com/privkey.pem'),
+  cert: fs.readFileSync('/etc/letsencrypt/live/gritos.com/cert.pem'),
+  requestCert: true,
+};
+const server = require('https').createServer(options, app);
+// const server = require('http').Server(app);
 const io = require('socket.io')(server);
 import Indicesdb from './indicesdb';
 import Vent from './vent';
