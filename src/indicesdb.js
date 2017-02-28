@@ -9,7 +9,7 @@ class Indicesdb{
   leer_entrada_indice(entrada, indice, callback){
     fs.readFile(directorio + indice + '/' + entrada + '.txt', { encoding: 'utf-8' }, (entryErr, entryData) => {
       if (entryErr){
-        console.log('leer entrada indice Error', entryErr);
+        console.log('leer entrada indice Error', entrada, indice);
         callback(null);
       } else {
         const entry = this.parse(entryData, indice, entrada);
@@ -36,7 +36,7 @@ class Indicesdb{
     try{
       entry = fs.readFileSync(directorio + indice + '/' + entrada + '.txt', { encoding: 'utf-8' });
     } catch(err){
-      console.log('leer entrada indice sync Error', err);
+      console.log('leer entrada indice sync Error', entrada, indice);
       return null;
     }
     entry = this.parse(entry, indice, entrada);
@@ -68,7 +68,7 @@ class Indicesdb{
     try{
       fs.writeFileSync(directorio + indice + '/' + entrada + '.txt', fichero, { encoding: 'utf-8' });
     } catch(err){
-      console.log('escribir entrada indice sync Error', err);
+      console.log('escribir entrada indice sync Error', entrada, indice);
       return null;
     }
   }
@@ -104,7 +104,7 @@ class Indicesdb{
     try{
       data = fs.readFileSync(logfile, { encoding: 'utf8' });
     } catch(err){
-      console.log('readcollection Error', err);
+      console.log('last_num Error', indice);
       return null;
     }
     data = data.replace(/\n$/,'');
