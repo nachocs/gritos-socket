@@ -5,6 +5,7 @@ const app = require('express')();
 const options = {
   key: fs.readFileSync('/etc/letsencrypt/live/gritos.com/privkey.pem'),
   cert: fs.readFileSync('/etc/letsencrypt/live/gritos.com/cert.pem'),
+  ca: fs.readFileSync('/etc/letsencrypt/live/gritos.com/fullchain1.pem'),
   requestCert: true,
 };
 const server = require('https').createServer(options, app);
