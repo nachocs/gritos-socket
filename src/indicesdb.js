@@ -8,12 +8,13 @@ const db_delim = '|';
 
 class Indicesdb{
   leer_entrada_indice(entrada, indice, callback){
-    fs.readFile(directorio + indice + '/' + entrada + '.txt', { encoding: 'utf-8' }, (entryErr, entryData) => {
+    fs.readFile(directorio + indice + '/' + entrada + '.txt', { encoding: 'binary' }, (entryErr, entryData) => {
       if (entryErr){
         console.log('Error leer entrada indice', entrada, indice);
         callback(null);
       } else {
-        const entry = this.parse(entryData, indice, entrada);
+        const input = iconv.decode(entryData, 'ISO-8859-1');
+        const entry = this.parse(input, indice, entrada);
         callback(entry);
       }
     });
