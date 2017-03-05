@@ -6,7 +6,7 @@ const options = {
   key: fs.readFileSync('/etc/letsencrypt/live/gritos.com/privkey.pem'),
   cert: fs.readFileSync('/etc/letsencrypt/live/gritos.com/cert.pem'),
   ca: fs.readFileSync('/etc/httpd/certs/rapidssl_sha256_ca.crt'),
-  requestCert: true,
+  requestCert: false,
 };
 const server = require('https').createServer(options, app);
 // const server = require('http').Server(app);
