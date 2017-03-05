@@ -1,4 +1,5 @@
 import fs from 'fs';
+import iconv from 'iconv-lite';
 
 const directorio = '/home/dreamers/datos/indices/';
 const db_delim = '|';
@@ -34,7 +35,9 @@ class Indicesdb{
   leer_entrada_indiceSync(entrada, indice){
     let entry;
     try{
-      entry = fs.readFileSync(directorio + indice + '/' + entrada + '.txt', { encoding: 'utf-8' });
+      const input = fs.readFileSync(directorio + indice + '/' + entrada + '.txt', { encoding: 'binary' });
+      entry = iconv.decode(input, 'ISO-8859-1');
+
     } catch(err){
       console.log('Error leer entrada indice sync', entrada, indice);
       return null;
