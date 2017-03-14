@@ -121,6 +121,7 @@ class App{
     }
   }
   preparar_entrada(entrada, indice, callback){
+    if (!entrada || !indice){return null;}
     const cb = (entry) => {
       if (indice.match(/\d+$/)){
         Indicesdb.leer_entrada_indice(entry.ciudadano, 'ciudadanos', (ciudadano)=>{
@@ -210,14 +211,16 @@ class App{
         if(nots.msg){
           watchMolas = nots.msg.split(/\|/);
           watchMolas.forEach(mensaje => {
-            const [idforo, molas] = mensaje.split(/\,/);
-            const [mola, nomola, love] = molas.split(/\//);
-            const [,indice, entrada] = idforo.match(/^(.*)\/(\d+)$/);
-            const entry = Indicesdb.leer_entrada_indiceSync(entrada, indice);
-            this.watchForNotificaciones(idforo, user, 'msg');
-            this.notifyMolas(user, 'mola', mola, indice, entrada, entry);
-            this.notifyMolas(user, 'nomola', nomola, indice, entrada, entry);
-            this.notifyMolas(user, 'love', love, indice, entrada, entry);
+            const [idforo, molas] = mensaje.split(/\,/) || [];
+            const [mola, nomola, love] = molas.split(/\//) || [];
+            const [,indice, entrada] = idforo.match(/^(.*)\/(\d+)$/) || [];
+            if (entrada && indice){
+              const entry = Indicesdb.leer_entrada_indiceSync(entrada, indice);
+              this.watchForNotificaciones(idforo, user, 'msg');
+              this.notifyMolas(user, 'mola', mola, indice, entrada, entry);
+              this.notifyMolas(user, 'nomola', nomola, indice, entrada, entry);
+              this.notifyMolas(user, 'love', love, indice, entrada, entry);
+            }
           });
         }
       }
@@ -276,7 +279,7 @@ class App{
       id,
     };
     if (tipo === 'minis'){
-      const [,indiceParent, entradaParent] = indice.match(/^(.*)\/(\d+)$/);
+      const [,indiceParent, entradaParent] = indice.match(/^(.*)\/(\d+)$/) || [];
       const parent = Indicesdb.leer_entrada_indiceSync(entradaParent, indiceParent);
       obj = Object.assign({}, obj, {parent});
     }
@@ -294,7 +297,7 @@ class App{
       });
     }
     if (entry && entry.INDICE.match(/^ciudadanos/)){
-      const [,citi] = entry.INDICE.match(/ciudadanos\/(\d+)/);
+      const [, citi] = entry.INDICE.match(/ciudadanos\/(\d+)/) || [];
       const citizen = Indicesdb.leer_entrada_indiceSync(citi, 'ciudadanos');
       obj = Object.assign({}, obj, {
         head: {
