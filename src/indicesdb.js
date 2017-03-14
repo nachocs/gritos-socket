@@ -34,7 +34,6 @@ class Indicesdb{
     return entry;
   }
   leer_entrada_indiceSync(entrada, indice){
-    if (!entrada || !indice){return null;}
     let entry;
     try{
       const input = fs.readFileSync(directorio + indice + '/' + entrada + '.txt', { encoding: 'binary' });
