@@ -288,24 +288,30 @@ class App{
     }
     if (tipo === 'msg' && typeof ciudadano === 'string' && ciudadano.length > 0){
       const citizen = Indicesdb.leer_entrada_indiceSync(ciudadano, 'ciudadanos');
-      obj = Object.assign({}, obj, {
-        ciudadano,
-        citizen: {
-          alias_principal: citizen.alias_principal,
-          dreamy_principal: citizen.dreamy_principal,
-        },
-      });
+      if (citizen){
+        obj = Object.assign({}, obj, {
+          ciudadano,
+          citizen: {
+            alias_principal: citizen.alias_principal,
+            dreamy_principal: citizen.dreamy_principal,
+          },
+        });
+      }
     }
     if (entry && entry.INDICE.match(/^ciudadanos/)){
       const [, citi] = entry.INDICE.match(/ciudadanos\/(\d+)/) || [];
       const citizen = Indicesdb.leer_entrada_indiceSync(citi, 'ciudadanos');
-      obj = Object.assign({}, obj, {
-        head: {
-          alias_principal: citizen.alias_principal,
-          dreamy_principal: citizen.dreamy_principal,
-          ID: citizen.ID,
-        },
-      });
+      if (citizen){
+        obj = Object.assign({}, obj, {
+          head: {
+            alias_principal: citizen.alias_principal,
+            dreamy_principal: citizen.dreamy_principal,
+            ID: citizen.ID,
+          },
+        });
+      } else {
+        console.log('error leer ciudadano ', entry.INDICE);
+      }
     }
     notificaciones.push(obj);
     this.indices.in('notificaciones_' + user).emit('notificaciones', {user, notificaciones});
