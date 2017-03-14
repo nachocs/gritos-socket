@@ -298,7 +298,7 @@ class App{
         });
       }
     }
-    if (entry && entry.INDICE.match(/^ciudadanos/)){
+    if (entry && entry.INDICE.match(/^ciudadanos\/\d+/)){
       const [, citi] = entry.INDICE.match(/ciudadanos\/(\d+)/) || [];
       const citizen = Indicesdb.leer_entrada_indiceSync(citi, 'ciudadanos');
       if (citizen){
@@ -309,8 +309,6 @@ class App{
             ID: citizen.ID,
           },
         });
-      } else {
-        console.log('error leer ciudadano ', entry.INDICE);
       }
     }
     notificaciones.push(obj);
