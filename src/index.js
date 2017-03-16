@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import fs from 'fs';
-
+import MetaInspector from 'node-metainspector';
 const app = require('express')();
 const options = {
   key: fs.readFileSync('/etc/letsencrypt/live/gritos.com/privkey.pem'),
@@ -48,6 +48,10 @@ class App{
       socket.on('update', (room, subtipo, ciudadano) => {
         console.log('recibido update', room, subtipo, ciudadano, this.currentUserId);
         self.update(room, subtipo, ciudadano);
+      });
+
+      socket.on('capture_url_request', (userId, url)=>{
+        self.capture_url_request(userId, url);
       });
 
       socket.on('prepararNotificaciones', userId=>{
@@ -159,9 +163,9 @@ class App{
   prepararNotificaciones(user){
     if (!user.match(/^\d+$/)){return;}
     Indicesdb.leer_entrada_indice(user, 'notificaciones', nots => {
-// &add_notificaciones($CIUDADANO{'NUMERO_ENTRADA'}, 'foro', $IDforo, $Num_Entries);
-// &add_notificaciones($CIUDADANO{'NUMERO_ENTRADA'}, 'msg', $IDforo . '/' . $Num_Entries, '0');
-// &add_notificaciones($CIUDADANO{'NUMERO_ENTRADA'}, 'minis', $IDforo . '/' . $Num_Entries, '0');
+      // &add_notificaciones($CIUDADANO{'NUMERO_ENTRADA'}, 'foro', $IDforo, $Num_Entries);
+      // &add_notificaciones($CIUDADANO{'NUMERO_ENTRADA'}, 'msg', $IDforo . '/' . $Num_Entries, '0');
+      // &add_notificaciones($CIUDADANO{'NUMERO_ENTRADA'}, 'minis', $IDforo . '/' . $Num_Entries, '0');
       if(nots){
         let watchForos = [];
         this.watchForNotificaciones('ciudadanos/' + user, user, 'yo');
@@ -314,6 +318,26 @@ class App{
     notificaciones.push(obj);
     this.indices.in('notificaciones_' + user).emit('notificaciones', {user, notificaciones});
     console.log('emitida notificacion', tipo, indice, subtipo, ciudadano);
+  }
+  capture_url_request(user, url){
+    const client = new MetaInspector(url, { timeout: 5000 });
+
+    client.on('fetch', function(){
+      const reply = {
+        title: client.title,
+        description: client.description,
+        image: client.image || client.images[0],
+        url: client.url,
+      };
+      this.indices.in('notificaciones_' + user).emit('capture_url_reply', {user, url, reply});
+
+    });
+
+    client.on('error', function(err){
+      console.log('Error capture_url_request', err);
+    });
+
+    client.fetch();
   }
 }
 
