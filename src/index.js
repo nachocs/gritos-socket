@@ -322,7 +322,7 @@ class App{
   capture_url_request(user, url){
     const client = new MetaInspector(url, { timeout: 5000 });
 
-    client.on('fetch', function(){
+    client.on('fetch', ()=>{
       const reply = {
         title: client.title,
         description: client.description,
