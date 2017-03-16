@@ -51,6 +51,7 @@ class App{
       });
 
       socket.on('capture_url_request', (userId, url)=>{
+        console.log('recibida capture_url_request ', userId, url);
         self.capture_url_request(userId, url);
       });
 
@@ -329,6 +330,7 @@ class App{
         image: client.image || client.images[0],
         url: client.url,
       };
+      console.log('emitida capture_url_reply', url);
       this.indices.in('notificaciones_' + user).emit('capture_url_reply', {user, url, reply});
 
     });
