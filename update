@@ -1,0 +1,6 @@
+set -x;
+cd /home/gritos/socket/gritos-socket;
+git pull;
+npm run build;
+systemctl stop gritos-socket;
+systemctl start gritos-socket;
