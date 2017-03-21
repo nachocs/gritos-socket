@@ -343,8 +343,8 @@ class App{
     client.fetch();
   }
   decode(string){
-    // const buff = new Buffer(string, 'utf8');
-    const latin1_string = iconv.decode(string, 'ISO-8859-1');
+    const buff = iconv.encode(string, 'utf8');
+    const latin1_string = iconv.decode(buff, 'ISO-8859-1');
     return latin1_string;
   }
 }
