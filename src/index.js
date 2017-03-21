@@ -13,6 +13,7 @@ const server = require('https').createServer(options, app);
 const io = require('socket.io')(server);
 import Indicesdb from './indicesdb';
 import Vent from './vent';
+import iconv from 'iconv-lite';
 
 // '/Users/nacho/Google Drive/dreamers/dreamers/datos/indices/peliculas/'
 class App{
@@ -325,8 +326,8 @@ class App{
 
     client.on('fetch', ()=>{
       const reply = {
-        title: client.title,
-        description: client.description,
+        title: this.decode(client.title),
+        description: this.decode(client.description),
         image: client.image || client.images[0],
         url: client.url,
       };
@@ -340,6 +341,11 @@ class App{
     });
 
     client.fetch();
+  }
+  decode(string){
+    const buff = new Buffer(string, 'utf8');
+    const latin1_string = iconv.decode(buff, 'ISO-8859-1');
+    return latin1_string;
   }
 }
 
