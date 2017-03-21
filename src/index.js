@@ -323,8 +323,8 @@ class App{
   }
   capture_url_request(user, url){
     const client = new MetaInspector(url, { timeout: 5000, maxRedirects:1 });
-    console.log(client.description);
     client.on('fetch', ()=>{
+      console.log(client.description);
       const reply = {
         title: this.decode(client.title),
         description: this.decode(client.description),
