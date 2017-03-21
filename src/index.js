@@ -331,7 +331,7 @@ class App{
         image: client.image || client.images[0],
         url: client.url,
       };
-      console.log('emitida capture_url_reply', url);
+      console.log('emitida capture_url_reply', url, reply);
       this.indices.in('notificaciones_' + user).emit('capture_url_reply', {user, url, reply});
 
     });
