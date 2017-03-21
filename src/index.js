@@ -322,7 +322,7 @@ class App{
     console.log('emitida notificacion', tipo, indice, subtipo, ciudadano);
   }
   capture_url_request(user, url){
-    const client = new MetaInspector(url, { timeout: 5000, maxRedirects:1, encoding:'ISO-8859-1'});
+    const client = new MetaInspector(url, { timeout: 5000, maxRedirects:1, encoding:'latin1'});
     client.on('fetch', ()=>{
       console.log('description ', client.description);
       const reply = {
