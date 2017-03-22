@@ -321,7 +321,7 @@ class App{
     console.log('emitida notificacion', tipo, indice, subtipo, ciudadano);
   }
   capture_url_request(user, url){
-    const client = new MetaInspector(url, { timeout: 5000});
+    const client = new MetaInspector(url, { timeout: 5000, encoding:'latin1'});
     client.on('fetch', ()=>{
       const reply = {
         title: this.correctorBruto(client.title),
