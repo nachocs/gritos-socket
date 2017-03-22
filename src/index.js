@@ -341,6 +341,7 @@ class App{
     client.fetch();
   }
   correctorBruto(string){
+    if (!string){return string;}
     string = string.replace(/Ã\"/ig, '&Oacute;');//=~ s/Ã\"/\&Oacute\;/ig;
     string = string.replace(/Ã\‰/ig, '&Eacute;'); //=~ s/Ã\‰/\&Eacute\;/ig;
     // string = string.replace(/Ã\/ig, '&Iacute;'); //=~ s/Ã\/\&Iacute\;/ig;
