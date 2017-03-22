@@ -343,8 +343,8 @@ class App{
   correctorBruto(string){
     string = string.replace(/Ã\"/ig, '&Oacute;');//=~ s/Ã\"/\&Oacute\;/ig;
     string = string.replace(/Ã\‰/ig, '&Eacute;'); //=~ s/Ã\‰/\&Eacute\;/ig;
-    string = string.replace(/Ã\/ig, '&Iacute;'); //=~ s/Ã\/\&Iacute\;/ig;
-    string = string.replace(/Ã\/ig, '&Aacute;');// =~ s/Ã\/\&Aacute\;/ig;
+    // string = string.replace(/Ã\/ig, '&Iacute;'); //=~ s/Ã\/\&Iacute\;/ig;
+    // string = string.replace(/Ã\/ig, '&Aacute;');// =~ s/Ã\/\&Aacute\;/ig;
     string = string.replace(/Ã\š/ig, '&Uacute\;'); //=~ s/Ã\š/\&Uacute\;/ig;
     string = string.replace(/Â¿/ig, '&iquest;'); // =~ s/Â¿/¿/ig;
     string = string.replace(/Ã³/ig, '&oacute;');// =~ s/Ã³/\&oacute\;/ig;
@@ -361,7 +361,7 @@ class App{
     string = string.replace(/\â\€\™/ig, '&acute;');// =~ s/\â\€\™/\&acute\;/ig;
     string = string.replace(/\â\€\"/ig, '-');// =~ s/\â\€\"/\-/ig;
     string = string.replace(/\â\€\œ/ig, '&quot;');// =~ s/\â\€\œ/\"/ig;
-    string = string.replace(/\â\€\/ig, '&quot;');// =~ s/\â\€\/\"/ig;
+    // string = string.replace(/\â\€\/ig, '&quot;');// =~ s/\â\€\/\"/ig;
     string = string.replace(/\â\€\¢/ig, '&middot;'); // =~ s/\â\€\¢/\•/ig;
     string = string.replace(/\â\€\¦/ig, '&tdot;');// =~ s/\â\€\¦/\…/ig;
     string = string.replace(/Ä\„/ig, '&iexcl;'); // =~ s/Ä\„/\¡/ig;
