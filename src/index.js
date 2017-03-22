@@ -13,7 +13,6 @@ const server = require('https').createServer(options, app);
 const io = require('socket.io')(server);
 import Indicesdb from './indicesdb';
 import Vent from './vent';
-import iconv from 'iconv-lite';
 
 // '/Users/nacho/Google Drive/dreamers/dreamers/datos/indices/peliculas/'
 class App{
@@ -324,10 +323,9 @@ class App{
   capture_url_request(user, url){
     const client = new MetaInspector(url, { timeout: 5000, maxRedirects:1, encoding:'latin1'});
     client.on('fetch', ()=>{
-      console.log('description ', client.description);
       const reply = {
-        title: this.decode(client.title),
-        description: this.decode(client.description),
+        title: this.correctorBruto(client.title),
+        description: this.correctorBruto(client.description),
         image: client.image || client.images[0],
         url: client.url,
       };
@@ -342,10 +340,38 @@ class App{
 
     client.fetch();
   }
-  decode(string){
-    const buff = iconv.encode(string, 'utf8');
-    const latin1_string = iconv.decode(buff, 'ISO-8859-1');
-    return latin1_string;
+  correctorBruto(string){
+    string = string.replace(/Ã\"/ig, '&Oacute;');//=~ s/Ã\"/\&Oacute\;/ig;
+    string = string.replace(/Ã\‰/ig, '&Eacute;'); //=~ s/Ã\‰/\&Eacute\;/ig;
+    string = string.replace(/Ã\/ig, '&Iacute;'); //=~ s/Ã\/\&Iacute\;/ig;
+    string = string.replace(/Ã\/ig, '&Aacute;');// =~ s/Ã\/\&Aacute\;/ig;
+    string = string.replace(/Ã\š/ig, '&Uacute\;'); //=~ s/Ã\š/\&Uacute\;/ig;
+    string = string.replace(/Â¿/ig, '&iquest;'); // =~ s/Â¿/¿/ig;
+    string = string.replace(/Ã³/ig, '&oacute;');// =~ s/Ã³/\&oacute\;/ig;
+    string = string.replace(/Ãº/ig, '&uacute;');// =~ s/Ãº/\&uacute\;/ig;
+    string = string.replace(/Ã\¡/ig, '&aacute;');// =~ s/Ã\¡/\&aacute\;/ig;
+    string = string.replace(/Ã\²/ig, '&ograve;');// =~ s/Ã\²/\&ograve\;/ig;
+    string = string.replace(/Ã\¼/ig, '&uuml;');// =~ s/Ã\¼/\&uuml\;/ig;
+    string = string.replace(/Ã©/ig, '&eacute;');// =~ s/Ã©/\&eacute\;/ig;
+    string = string.replace(/Ã¤/ig, '&auml;'); // =~ s/Ã¤/\&auml\;/ig;
+    string = string.replace(/Ã /ig, '&agrave;'); //=~ s/Ã /\&agrave\;/ig;
+    string = string.replace(/Ã\±/ig, '&ntilde;'); //=~ s/Ã\±/\&ntilde\;/ig;
+    string = string.replace(/Ã\«/ig, '&euml;'); // =~ s/Ã\«/\&euml\;/ig;
+    string = string.replace(/Ã\'/ig, '&Ntilde;'); // =~ s/Ã\'/\&Ntilde\;/ig;
+    string = string.replace(/\â\€\™/ig, '&acute;');// =~ s/\â\€\™/\&acute\;/ig;
+    string = string.replace(/\â\€\"/ig, '-');// =~ s/\â\€\"/\-/ig;
+    string = string.replace(/\â\€\œ/ig, '&quot;');// =~ s/\â\€\œ/\"/ig;
+    string = string.replace(/\â\€\/ig, '&quot;');// =~ s/\â\€\/\"/ig;
+    string = string.replace(/\â\€\¢/ig, '&middot;'); // =~ s/\â\€\¢/\•/ig;
+    string = string.replace(/\â\€\¦/ig, '&tdot;');// =~ s/\â\€\¦/\…/ig;
+    string = string.replace(/Ä\„/ig, '&iexcl;'); // =~ s/Ä\„/\¡/ig;
+    string = string.replace(/Ã/ig, '&iacute;'); //=~ s/Ã/\&iacute\;/ig;
+    string = string.replace(/Â/ig, '');// =~ s/Â//ig;
+    string = string.replace(/\'+/ig, '&apos;');// =~ s/\'+/\'/ig;
+    string = string.replace(/^\n/ig, ''); // $string =~ s/^\n//ig;
+    string = string.replace(/\n/ig, '<br>');// =~ s/\n/<br>/ig;
+
+    return string;
   }
 }
 
