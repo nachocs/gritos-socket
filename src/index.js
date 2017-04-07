@@ -325,7 +325,7 @@ class App{
   }
   getImageDimensions(image){
     return gm(request(image))
-    .identify((err, size)=>{
+    .size((err, size)=>{
       return size;
     });
   }
