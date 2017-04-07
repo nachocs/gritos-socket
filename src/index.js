@@ -323,6 +323,9 @@ class App{
   capture_url_request(user, url){
     const client = new MetaInspector(url, { timeout: 5000, encoding:'latin1'});
     client.on('fetch', ()=>{
+      if (client.url && !client.image && client.url.match(/[\.jpg|\.gif|\.png|\.jpeg]+$/i)){
+        client.image = client.url;
+      }
       const reply = {
         title: this.correctorBruto(client.title),
         description: this.correctorBruto(client.description),
