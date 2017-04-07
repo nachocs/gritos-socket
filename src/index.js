@@ -324,6 +324,9 @@ class App{
     console.log('emitida notificacion', tipo, indice, subtipo, ciudadano);
   }
   getImageDimensions(image, callback){
+    if (image.match(/^\/\//)){
+      image = 'http:' + image;
+    }
     gm(request(image))
     .identify((err, size)=>{
       callback(size);
