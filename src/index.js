@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 import fs from 'fs';
 import MetaInspector from 'node-metainspector';
+import request from 'request';
+const gm = require('gm').subClass({imageMagick: true});
+
 const app = require('express')();
 const options = {
   key: fs.readFileSync('/etc/letsencrypt/live/gritos.com/privkey.pem'),
@@ -320,16 +323,29 @@ class App{
     this.indices.in('notificaciones_' + user).emit('notificaciones', {user, notificaciones});
     console.log('emitida notificacion', tipo, indice, subtipo, ciudadano);
   }
+  getImageDimensions(image){
+    return gm(request(image))
+    .identify((err, size)=>{
+      return size;
+    });
+  }
   capture_url_request(user, url){
     const client = new MetaInspector(url, { timeout: 5000, encoding:'latin1'});
     client.on('fetch', ()=>{
+      let image, size;
       if (client.url && !client.image && client.url.match(/[\.jpg|\.gif|\.png|\.jpeg]+$/i)){
-        client.image = client.url;
+        image = client.url;
+      } else {
+        image = client.image || client.images[0];
+      }
+      if (image){
+        size = this.getImageDimensions(image);
       }
       const reply = {
         title: this.correctorBruto(client.title),
         description: this.correctorBruto(client.description),
-        image: client.image || client.images[0],
+        image,
+        size,
         url: client.url,
       };
       console.log('emitida capture_url_reply', url, reply);
