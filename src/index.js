@@ -359,8 +359,8 @@ class App{
 
     });
 
-    client.on('error', function(err){
-      console.log('Error capture_url_request', err);
+    client.on('error', function(){
+      // console.log('Error capture_url_request', err);
     });
 
     client.fetch();
