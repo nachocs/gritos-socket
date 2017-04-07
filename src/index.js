@@ -323,35 +323,36 @@ class App{
     this.indices.in('notificaciones_' + user).emit('notificaciones', {user, notificaciones});
     console.log('emitida notificacion', tipo, indice, subtipo, ciudadano);
   }
-  getImageDimensions(image){
-    let res;
+  getImageDimensions(image, callback){
     gm(request(image))
     .identify((err, size)=>{
-      res = size;
+      callback(size);
     });
-    return res;
   }
   capture_url_request(user, url){
     const client = new MetaInspector(url, { timeout: 5000, encoding:'latin1'});
     client.on('fetch', ()=>{
-      let image, size;
       if (client.url && !client.image && client.url.match(/[\.jpg|\.gif|\.png|\.jpeg]+$/i)){
-        image = client.url;
+        client.image = client.url;
       } else {
-        image = client.image || client.images[0];
+        client.image = client.image || client.images[0];
       }
-      if (image){
-        size = this.getImageDimensions(image);
-      }
-      const reply = {
-        title: this.correctorBruto(client.title),
-        description: this.correctorBruto(client.description),
-        image,
-        size,
-        url: client.url,
+      const callback = (user, url, client, size)=>{
+        const reply = {
+          title: this.correctorBruto(client.title),
+          description: this.correctorBruto(client.description),
+          image: client.image,
+          size,
+          url: client.url,
+        };
+        console.log('emitida capture_url_reply', url, reply);
+        this.indices.in('notificaciones_' + user).emit('capture_url_reply', {user, url, reply});
       };
-      console.log('emitida capture_url_reply', url, reply);
-      this.indices.in('notificaciones_' + user).emit('capture_url_reply', {user, url, reply});
+      if (client.image){
+        this.getImageDimensions(client.image, (size)=>callback(user, url, client, size));
+      } else {
+        callback(user, url, client);
+      }
 
     });
 
