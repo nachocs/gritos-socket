@@ -324,10 +324,12 @@ class App{
     console.log('emitida notificacion', tipo, indice, subtipo, ciudadano);
   }
   getImageDimensions(image){
-    return gm(request(image))
-    .size((err, size)=>{
-      return size;
+    let res;
+    gm(request(image))
+    .identify((err, size)=>{
+      res = size;
     });
+    return res;
   }
   capture_url_request(user, url){
     const client = new MetaInspector(url, { timeout: 5000, encoding:'latin1'});
