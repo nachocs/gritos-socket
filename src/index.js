@@ -328,7 +328,7 @@ class App{
       image = 'http:' + image;
     }
     gm(request(image))
-    .identify((err, size)=>{
+    .size((err, size)=>{
       callback(size);
     });
   }
