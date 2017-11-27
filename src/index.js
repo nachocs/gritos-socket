@@ -337,6 +337,8 @@ class App{
     client.on('fetch', ()=>{
       if (client.url && !client.image && client.url.match(/[\.jpg|\.gif|\.png|\.jpeg]+$/i)){
         client.image = client.url;
+        client.description = '';
+        client.title = client.url;
       } else {
         client.image = client.image || client.images[0];
       }
