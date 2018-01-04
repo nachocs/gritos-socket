@@ -333,7 +333,7 @@ class App{
     });
   }
   capture_url_request(user, url){
-    const client = new MetaInspector(url, { timeout: 5000, encoding:'latin1'});
+    const client = new MetaInspector(url, { timeout: 5000, encoding: 'latin1', maxRedirects: 10});
     client.on('fetch', ()=>{
       if (client.url && !client.image && client.url.match(/[\.jpg|\.gif|\.png|\.jpeg]+$/i)){
         client.image = client.url;
@@ -397,8 +397,10 @@ class App{
     string = string.replace(/Â/ig, '');// =~ s/Â//ig;
     string = string.replace(/\'+/ig, '&apos;');// =~ s/\'+/\'/ig;
     string = string.replace(/^\n/ig, ''); // $string =~ s/^\n//ig;
+    string = string.replace(/<(?:.|\n)*?>/gm, ''); // remove html tags
     string = string.replace(/\n/ig, '<br>');// =~ s/\n/<br>/ig;
-
+    string = string.replace(/[^\x00-\x7F]/g, ''); // remove non-ascii
+    string = string.substring(0, 300);
     return string;
   }
 }
