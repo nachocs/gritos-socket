@@ -353,12 +353,13 @@ class App{
         console.log('emitida capture_url_reply', url, reply);
         this.indices.in('notificaciones_' + user).emit('capture_url_reply', {user, url, reply});
       };
-      if (client.image){
-        this.getImageDimensions(client.image, (size)=>callback(user, url, client, size));
-      } else {
-        callback(user, url, client);
+      if (client.title || client.image){
+        if (client.image){
+          this.getImageDimensions(client.image, (size)=>callback(user, url, client, size));
+        } else {
+          callback(user, url, client);
+        }
       }
-
     });
 
     client.on('error', function(){
