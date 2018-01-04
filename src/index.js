@@ -3,7 +3,6 @@ import fs from 'fs';
 import MetaInspector from 'node-metainspector';
 import request from 'request';
 const gm = require('gm').subClass({imageMagick: true});
-const imageType = require('image-type');
 
 const app = require('express')();
 const options = {
@@ -341,14 +340,8 @@ class App{
         client.description = '';
         client.title = '';
       } else {
-        if (!client.title && imageType(client.description)){
-          client.image = client.description;
-          client.description = '';
-        } else {
-          client.image = client.image || client.images[0];
-        }
+        client.image = client.image || client.images[0];
       }
-
       const callback = (user, url, client, size)=>{
         const reply = {
           title: this.correctorBruto(client.title),
