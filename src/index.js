@@ -13,7 +13,12 @@ const options = {
 };
 const server = require('https').createServer(options, app);
 // const server = require('http').Server(app);
-const io = require('socket.io')(server);
+const io = require('socket.io')(server, {
+  cors: {
+    origin: ['https://gritos.com', 'http://localhost:3001'],
+    methods: ['GET', 'POST'],
+  },
+});
 import Indicesdb from './indicesdb';
 import Vent from './vent';
 
