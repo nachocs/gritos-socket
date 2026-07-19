@@ -14,6 +14,11 @@ const options = {
 const server = require('https').createServer(options, app);
 // const server = require('http').Server(app);
 const io = require('socket.io')(server, {
+  // The currently-deployed production frontend still ships socket.io-client
+  // 1.7.3 (Engine.IO v3); this lets it keep connecting to this v4 server so
+  // the socket upgrade can deploy independently of the React migration.
+  // Drop once the legacy Backbone bundle is fully retired.
+  allowEIO3: true,
   cors: {
     origin: ['https://gritos.com', 'http://localhost:3001'],
     methods: ['GET', 'POST'],
