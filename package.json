@@ -10,26 +10,20 @@
     "test": "mocha --compilers js:babel-register"
   },
   "dependencies": {
-    "events": "^1.1.1",
     "express": "^4.14.0",
     "gm": "^1.23.0",
     "iconv-lite": "^0.4.15",
     "node-metainspector": "^1.3.0",
     "request": "^2.81.0",
-    "require": "^2.4.20",
     "socket.io": "^4.8.3"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
     "babel-core": "^6.23.1",
     "babel-eslint": "^7.1.1",
-    "babel-loader": "^6.4.0",
     "babel-preset-es2015": "^6.22.0",
-    "babel-preset-stage-0": "^6.22.0",
     "babel-preset-stage-2": "^6.18.0",
     "babel-register": "^6.18.0",
-    "babel-runtime": "",
-    "babelify": "^7.3.0",
     "eslint": "^3.17.1",
     "eslint-plugin-babel": "^4.1.1",
     "mocha": "^3.2.0",
