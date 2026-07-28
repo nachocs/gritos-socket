@@ -1,19 +1,26 @@
 #!/usr/bin/env node
-import fs from 'fs';
-import MetaInspector from 'node-metainspector';
-import request from 'request';
-const gm = require('gm').subClass({imageMagick: true});
+import fs from 'node:fs';
+import https from 'node:https';
+import { Readable } from 'node:stream';
+import express from 'express';
+import { Server } from 'socket.io';
+import subclass from 'gm';
+import { fetchMetadata } from './metadata.js';
+import { correctorBruto } from './corrector.js';
+import Indicesdb from './indicesdb.js';
+import Vent from './vent.js';
 
-const app = require('express')();
+const gm = subclass.subClass({imageMagick: true});
+
+const app = express();
 const options = {
   key: fs.readFileSync('/etc/letsencrypt/live/gritos.com/privkey.pem'),
   cert: fs.readFileSync('/etc/letsencrypt/live/gritos.com/cert.pem'),
   ca: fs.readFileSync('/etc/httpd/certs/rapidssl_sha256_ca.crt'),
   requestCert: false,
 };
-const server = require('https').createServer(options, app);
-// const server = require('http').Server(app);
-const io = require('socket.io')(server, {
+const server = https.createServer(options, app);
+const io = new Server(server, {
   // The currently-deployed production frontend still ships socket.io-client
   // 1.7.3 (Engine.IO v3); this lets it keep connecting to this v4 server so
   // the socket upgrade can deploy independently of the React migration.
@@ -24,8 +31,6 @@ const io = require('socket.io')(server, {
     methods: ['GET', 'POST'],
   },
 });
-import Indicesdb from './indicesdb';
-import Vent from './vent';
 
 // '/Users/nacho/Google Drive/dreamers/dreamers/datos/indices/peliculas/'
 class App{
@@ -35,7 +40,7 @@ class App{
       console.log('listening port 8081.');
     });
     app.get('/', (req, res) => {
-      res.sendFile(`${__dirname}/index.html`);
+      res.sendFile(`${import.meta.dirname}/index.html`);
     });
     this.notifiers = {};
     // this.watching = {};
@@ -181,7 +186,7 @@ class App{
       // &add_notificaciones($CIUDADANO{'NUMERO_ENTRADA'}, 'msg', $IDforo . '/' . $Num_Entries, '0');
       // &add_notificaciones($CIUDADANO{'NUMERO_ENTRADA'}, 'minis', $IDforo . '/' . $Num_Entries, '0');
       if(nots){
-        let watchForos = [];
+        let watchForos;
         this.watchForNotificaciones('ciudadanos/' + user, user, 'yo');
         if (nots.yo){
           let last;
@@ -199,24 +204,22 @@ class App{
         if (nots.foro){
           watchForos = nots.foro.split(/\|/);
           watchForos.forEach(foro => {
-            let indice = '', last;
-            [indice, last] = foro.split(/\,/);
+            const [indice, lastRaw] = foro.split(/,/);
             this.watchForNotificaciones(indice, user, 'foro');
             const num = Indicesdb.last_num(indice);
-            last = Number(last);
+            const last = Number(lastRaw);
             if (num > last + 1){
               const entry = Indicesdb.leer_entrada_indiceSync(num - 1, indice);
               this.emitNotificacion(user, 'foro', indice, entry, null, null, (num - last));
             }
           });
         }
-        let watchMinis = [];
+        let watchMinis;
         if (nots.minis){
           watchMinis = nots.minis.split(/\|/);
           watchMinis.forEach(minis => {
-            let indice = '', last;
-            [indice, last] = minis.split(/\,/);
-            last = Number(last);
+            const [indice, lastRaw] = minis.split(/,/);
+            const last = Number(lastRaw);
             this.watchForNotificaciones(indice, user, 'minis');
             const num = Indicesdb.last_num(indice);
             if (num > last + 1){
@@ -225,11 +228,11 @@ class App{
             }
           });
         }
-        let watchMolas = [];
+        let watchMolas;
         if(nots.msg){
           watchMolas = nots.msg.split(/\|/);
           watchMolas.forEach(mensaje => {
-            const [idforo, molas] = mensaje.split(/\,/) || [];
+            const [idforo, molas] = mensaje.split(/,/) || [];
             const [mola, nomola, love] = molas.split(/\//) || [];
             const [,indice, entrada] = idforo.match(/^(.*)\/(\d+)$/) || [];
             if (entrada && indice){
@@ -337,82 +340,55 @@ class App{
     if (image.match(/^\/\//)){
       image = 'http:' + image;
     }
-    gm(request(image))
-    .size((err, size)=>{
-      callback(size);
-    });
-  }
-  capture_url_request(user, url){
-    const client = new MetaInspector(url, { timeout: 5000, encoding: 'latin1', maxRedirects: 10});
-    client.on('fetch', ()=>{
-      if (client.url && !client.image && client.url.match(/[\.jpg|\.gif|\.png|\.jpeg]+$/i)){
-        client.image = client.url;
-        client.description = '';
-        client.title = '';
-      } else {
-        client.image = client.image || client.images[0];
+    fetch(image, { signal: AbortSignal.timeout(5000) })
+    .then((response)=>{
+      if (!response.ok || !response.body){
+        callback(undefined);
+        return;
       }
-      const callback = (user, url, client, size)=>{
-        const reply = {
-          title: this.correctorBruto(client.title),
-          description: this.correctorBruto(client.description),
-          image: client.image,
-          size,
-          url: client.url,
-        };
-        console.log('emitida capture_url_reply', url, reply);
-        this.indices.in('notificaciones_' + user).emit('capture_url_reply', {user, url, reply});
+      gm(Readable.fromWeb(response.body))
+      .size((err, size)=>{
+        callback(size);
+      });
+    })
+    .catch(()=>callback(undefined));
+  }
+  async capture_url_request(user, url){
+    let meta;
+    try {
+      meta = await fetchMetadata(url, { timeout: 5000 });
+    } catch {
+      // Previews are best-effort: a dead or slow link just produces no reply.
+      return;
+    }
+
+    if (meta.url && !meta.image && meta.url.match(/[.jpg|.gif|.png|.jpeg]+$/i)){
+      meta.image = meta.url;
+      meta.description = '';
+      meta.title = '';
+    } else {
+      meta.image = meta.image || meta.images[0];
+    }
+
+    const callback = (size)=>{
+      const reply = {
+        title: correctorBruto(meta.title),
+        description: correctorBruto(meta.description),
+        image: meta.image,
+        size,
+        url: meta.url,
       };
-      if (client.title || client.image){
-        if (client.image){
-          this.getImageDimensions(client.image, (size)=>callback(user, url, client, size));
-        } else {
-          callback(user, url, client);
-        }
+      console.log('emitida capture_url_reply', url, reply);
+      this.indices.in('notificaciones_' + user).emit('capture_url_reply', {user, url, reply});
+    };
+
+    if (meta.title || meta.image){
+      if (meta.image){
+        this.getImageDimensions(meta.image, callback);
+      } else {
+        callback();
       }
-    });
-
-    client.on('error', function(){
-      // console.log('Error capture_url_request', err);
-    });
-
-    client.fetch();
-  }
-  correctorBruto(string){
-    if (!string){return string;}
-    string = string.replace(/Ã\"/ig, '&Oacute;');//=~ s/Ã\"/\&Oacute\;/ig;
-    string = string.replace(/Ã\‰/ig, '&Eacute;'); //=~ s/Ã\‰/\&Eacute\;/ig;
-    // string = string.replace(/Ã\/ig, '&Iacute;'); //=~ s/Ã\/\&Iacute\;/ig;
-    // string = string.replace(/Ã\/ig, '&Aacute;');// =~ s/Ã\/\&Aacute\;/ig;
-    string = string.replace(/Ã\š/ig, '&Uacute\;'); //=~ s/Ã\š/\&Uacute\;/ig;
-    string = string.replace(/Â¿/ig, '&iquest;'); // =~ s/Â¿/¿/ig;
-    string = string.replace(/Ã³/ig, '&oacute;');// =~ s/Ã³/\&oacute\;/ig;
-    string = string.replace(/Ãº/ig, '&uacute;');// =~ s/Ãº/\&uacute\;/ig;
-    string = string.replace(/Ã\¡/ig, '&aacute;');// =~ s/Ã\¡/\&aacute\;/ig;
-    string = string.replace(/Ã\²/ig, '&ograve;');// =~ s/Ã\²/\&ograve\;/ig;
-    string = string.replace(/Ã\¼/ig, '&uuml;');// =~ s/Ã\¼/\&uuml\;/ig;
-    string = string.replace(/Ã©/ig, '&eacute;');// =~ s/Ã©/\&eacute\;/ig;
-    string = string.replace(/Ã¤/ig, '&auml;'); // =~ s/Ã¤/\&auml\;/ig;
-    string = string.replace(/Ã /ig, '&agrave;'); //=~ s/Ã /\&agrave\;/ig;
-    string = string.replace(/Ã\±/ig, '&ntilde;'); //=~ s/Ã\±/\&ntilde\;/ig;
-    string = string.replace(/Ã\«/ig, '&euml;'); // =~ s/Ã\«/\&euml\;/ig;
-    string = string.replace(/Ã\'/ig, '&Ntilde;'); // =~ s/Ã\'/\&Ntilde\;/ig;
-    string = string.replace(/\â\€\™/ig, '&acute;');// =~ s/\â\€\™/\&acute\;/ig;
-    string = string.replace(/\â\€\"/ig, '-');// =~ s/\â\€\"/\-/ig;
-    string = string.replace(/\â\€\œ/ig, '&quot;');// =~ s/\â\€\œ/\"/ig;
-    // string = string.replace(/\â\€\/ig, '&quot;');// =~ s/\â\€\/\"/ig;
-    string = string.replace(/\â\€\¢/ig, '&middot;'); // =~ s/\â\€\¢/\•/ig;
-    string = string.replace(/\â\€\¦/ig, '&tdot;');// =~ s/\â\€\¦/\…/ig;
-    string = string.replace(/Ä\„/ig, '&iexcl;'); // =~ s/Ä\„/\¡/ig;
-    string = string.replace(/Ã/ig, '&iacute;'); //=~ s/Ã/\&iacute\;/ig;
-    string = string.replace(/Â/ig, '');// =~ s/Â//ig;
-    string = string.replace(/\'+/ig, '&apos;');// =~ s/\'+/\'/ig;
-    string = string.replace(/^\n/ig, ''); // $string =~ s/^\n//ig;
-    string = string.replace(/<(?:.|\n)*?>/gm, ''); // remove html tags
-    string = string.replace(/\n/ig, '<br>');// =~ s/\n/<br>/ig;
-    string = string.replace(/[^\x00-\x7F]/g, ''); // remove non-ascii
-    string = string.substring(0, 300);
-    return string;
+    }
   }
 }
 

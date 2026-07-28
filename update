@@ -1,7 +1,6 @@
 set -x;
 cd /home/gritos/socket/gritos-socket;
 git pull;
-npm install;
-npm run build;
+npm ci --omit=dev;
 systemctl stop gritos-socket;
 systemctl start gritos-socket;

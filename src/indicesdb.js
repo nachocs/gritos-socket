@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'node:fs';
 import iconv from 'iconv-lite';
 
 const directorio = '/home/dreamers/datos/indices/';
@@ -24,8 +24,8 @@ class Indicesdb{
     const entry = {};
     const array = entryData.split('\n');
     for (let i = 0, len = array.length; i< len; i++){
-      const values = array[i].split('\|');
-      values[1] = values[1].replace(/~~/ig, '\|');
+      const values = array[i].split('|');
+      values[1] = values[1].replace(/~~/ig, '|');
       values[1] = values[1].replace(/``/ig, '\n');
       entry[values[0]] = values[1];
     }
@@ -39,7 +39,7 @@ class Indicesdb{
       const input = fs.readFileSync(directorio + indice + '/' + entrada + '.txt', { encoding: 'binary' });
       entry = iconv.decode(input, 'ISO-8859-1');
 
-    } catch(err){
+    } catch {
       console.log('Error leer entrada indice sync', entrada, indice);
       return null;
     }
@@ -71,7 +71,7 @@ class Indicesdb{
     });
     try{
       fs.writeFileSync(directorio + indice + '/' + entrada + '.txt', fichero, { encoding: 'utf-8' });
-    } catch(err){
+    } catch {
       console.log('Error escribir entrada indice sync', entrada, indice);
       return null;
     }
@@ -107,7 +107,7 @@ class Indicesdb{
     // console.log('logfile es ', logfile);
     try{
       data = fs.readFileSync(logfile, { encoding: 'utf8' });
-    } catch(err){
+    } catch {
       console.log('Error last_num', indice);
       return null;
     }
