@@ -8,7 +8,7 @@ const BASE = DIRECTORIO + 'admin/sqlite/subindices.sqlite';
 // los índices de fuera del árbol (enlaces simbólicos) se guardan con este prefijo
 const RAICES_FUERA = [['/home/dreamers/www/foros', 'foros'], ['/home/gritos/www', 'gritos']];
 const db_delim = '|';
-const ascii = /^[\x00-\x7f]*$/;
+const ascii = /^\p{ASCII}*$/u;
 
 // RECUERDA QUE ESTAS RUTIINAS NO SUBINDEXAN
 
